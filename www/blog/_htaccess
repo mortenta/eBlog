@@ -1,0 +1,4 @@
+RewriteEngine on
+
+RewriteRule ^([^/\.]+)/([^\.]+)/?$ /blog/post/index.php?date=$1&url_path=$2&%{QUERY_STRING} [L]
+RewriteRule ^([^/\.]+)/?$ /blog/post/index.php?date=$1&url_path=$2&%{QUERY_STRING} [L]
