@@ -1,0 +1,21 @@
+ul.breadcrumb {
+	list-style: none;
+	>li {
+		display: inline;
+		font-size: 15px;
+		color:#0092D6;
+		cursor: pointer;
+		>a {
+			color: inherit;
+			text-decoration: none;
+		}
+		>a:hover {
+			text-decoration: underline;
+		}
+	}
+	>li+li:before {
+		padding: 8px;
+		color: black;
+		content: "/\00a0";
+	}
+}

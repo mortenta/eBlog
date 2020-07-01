@@ -2,8 +2,9 @@
 require_once('../../../../logic/classes/blog_admin.class.php');
 $BlogAdminObj = new blog_admin;
 $OA['success'] = FALSE;
-if (is_object($BlogAdminObj) && $BlogAdminObj->signIn($_POST['username'],$_POST['password'])) {
+if (is_object($BlogAdminObj) && $BlogAdminObj->setPostID($_REQUEST['id']) && is_array($BlogArray = $BlogAdminObj->loadPost())) {
 	$OA['success'] = TRUE;
+	$OA['data'] = $BlogArray;
 }
 else {
 	$OA['error'] = $BlogAdminObj->getErrorMsg();

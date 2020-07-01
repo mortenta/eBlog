@@ -1,0 +1,38 @@
+#growlc {
+	position: fixed;
+	top: 0;
+	right: 0;
+	z-index: 200000;
+	>.notification {
+		box-sizing: border-box;
+		margin: 10px;
+		width: 300px;
+		background-color: rgba(0,0,0,0.7);
+		padding: 10px 30px 10px 20px;
+		border-radius: 5px;
+		color: #fff;
+		font-size: 0.9em;
+		line-height: 1.6em;
+		display: none;
+		h5 {
+			color: #fff;
+			font-size: 1.1em;
+			font-weight: 400;
+			margin: 0;
+		}
+		p {
+			font-size: inherit;
+			margin: 0.5em 0 0 0;
+		}
+		i.close {
+			position: absolute;
+			right: 20px;
+			font-size: 1.5em;
+			cursor: pointer;
+			color: rgba(255,255,255,.65);
+		}
+		i.close:hover {
+			color: #fff;
+		}
+	}
+}

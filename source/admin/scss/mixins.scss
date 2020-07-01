@@ -1,0 +1,26 @@
+@mixin hgradient ($tcolor,$bcolor) {
+	background-color: $tcolor;
+	background: -webkit-gradient(top,$tcolor,$bcolor);
+	background: -webkit-linear-gradient(top,$tcolor,$bcolor);
+	background: -moz-linear-gradient(top,$tcolor,$bcolor);
+	background: linear-gradient(top,$tcolor,$bcolor);
+	background: -ms-linear-gradient(top, $tcolor 0%,$bcolor 100%); /* IE10+ */
+	background: linear-gradient(to bottom, $tcolor 0%,$bcolor 100%); /* W3C */
+	filter: "progid:DXImageTransform.Microsoft.gradient( startColorstr='$tcolor', endColorstr='$bcolor',GradientType=0 )";
+}
+
+@mixin clearfix() {
+	&:before,
+	&:after {
+		display: table; // 2
+		content: " "; // 1
+	}
+	&:after {
+		clear: both;
+	}
+}
+
+@mixin opacity ($pct) {
+	opacity:$pct/100;
+	filter:alpha(opacity=$pct);
+}

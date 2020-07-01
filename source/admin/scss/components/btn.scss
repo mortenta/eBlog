@@ -1,0 +1,38 @@
+.btn {
+	display: inline-block;
+	margin-bottom: 1px;
+	font-weight: 100;
+	text-align: center;
+	vertical-align: middle;
+	touch-action: manipulation;
+	cursor: pointer;
+	background-image: none;
+	border: 1px solid transparent;
+	white-space: nowrap;
+	padding: 5px 10px;
+	border-radius: 3px;
+	>i.fa.r {
+		margin-right: 3px;
+	}
+}
+
+.btn.btn-outlined-red {
+	background-color: transparent;
+	border: 1px solid red;
+	color: red;
+}
+
+.btn.btn-primary,
+.btn.btn-blue {
+	background-color: #0092DC;
+	color: #fff;
+}
+
+.btn.btn-select {
+	background-color: transparent;
+	border: 1px solid lighten($theme_color,40%);
+	color: lighten($theme_color,40%);
+}
+.btn.btn-select:hover {
+	
+}

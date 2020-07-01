@@ -1,0 +1,82 @@
+<div class="grid" style="margin: 1em 0 .5em 0;">
+	<div class="row">
+		<div class="col col-6">
+			<ul class="breadcrumb" style="margin: .4em 0;">
+				<li><a href="#/">Blog list</a></li>
+				<li><a href="#/blog/edit/<%=data.id%>/"><%=data.title%></a></li>
+			</ul>
+		</div>
+		<div class="col col-6 right" style="">
+			
+		</div>
+	</div>
+</div>
+			
+<div class="grid space" style="margin: 1em 0 .5em 0;">
+	<div class="row">
+		<div class="col col-8">
+			<div class="form-group space">
+				<label>Heading</label>
+				<input type="text" name="title" value="<%=data.title%>">
+			</div>
+			<div class="form-group space">
+				<label>Summary</label>
+				<textarea style="height:8em;"></textarea>
+			</div>
+			<div class="form-group space">
+				<label>Main picture</label>
+				<input type="text" name="img" value="" style="width:calc(100% - 75px);"> 
+				<button class="btn btn-select" style="float: right;" data-action="select-main-image">Select</button>
+			</div>
+		</div>
+		<div class="col col-4">
+			<div class="form-group space">
+				<label>Meta title</label>
+				<input type="text" name="title" value="<%=data.title%>">
+			</div>
+			<div class="form-group space">
+				<label>Meta description</label>
+				<textarea style="height:177px;"></textarea>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col col-12">
+			<div class="form-group space">
+				<label>Content</label>
+				<textarea class="tinymce"></textarea>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col col-8">
+			<div class="form-group space">
+				<label>URL Path</label>
+				<input type="text" name="title" value="<%=data.url_path%>">
+			</div>
+		</div>
+		<div class="col col-1">&nbsp;</div>
+		<div class="col col-3">
+			<h3 style="font-weight: 100;margin-bottom: .8em;">Options:</h3>
+			<div class="form-group space">
+				<label><input type="checkbox"> Publish blog post</label>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="vspace"></div>
+
+<div class="grid space" style="margin: 1em 0 .5em 0;">
+	<div class="row">
+		<div class="col col-6">
+			<button class="btn btn-outlined-red">Delete</button>
+		</div>
+		<div class="col col-6 right">
+			<button class="btn btn-primary" data-action="save">Save changes</button>
+		</div>
+	</div>
+</div>
+
+
+
