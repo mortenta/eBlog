@@ -11,6 +11,11 @@ class blog_admin {
 	private $Username;
 	private $PostID;
 	private $Title;
+	private $Summary;
+	private $Content;
+	private $Img;
+	private $Published;
+	private $URLPath;
 
 	function __construct () {
 		chdir(dirname(__FILE__));
@@ -42,6 +47,46 @@ class blog_admin {
 		else {
 			return FALSE;
 		}
+	}
+
+	public function setSummary ($string) {
+		$this->Summary = $string;
+		return TRUE;
+	}
+	
+	public function setContent ($string) {
+		$this->Content = $string;
+		return TRUE;
+	}
+	
+	public function setImg ($string) {
+		$this->Img = $string;
+		return TRUE;
+	}
+	
+	public function setPublished ($bool) {
+		if ($bool == '1') {
+			$this->Published = TRUE;
+		}
+		else {
+			$this->Published = FALSE;
+		}
+		return TRUE;
+	}
+	
+	public function setURLPath ($string) {
+		$this->URLPath = $this->toAscii($string);
+		return TRUE;
+	}
+
+	public function setMetaTitle ($string) {
+		$this->MetaTitle = $string;
+		return TRUE;
+	}
+
+	public function setMetaDescription ($string) {
+		$this->MetaDescription = $string;
+		return TRUE;
 	}
 
 	/**
@@ -146,6 +191,8 @@ class blog_admin {
 			$QueryString .= "summary=:summary, ";
 			$QueryString .= "content=:content, ";
 			$QueryString .= "img=:img, ";
+			$QueryString .= "meta_title=:meta_title, ";
+			$QueryString .= "meta_description=:meta_description, ";
 			if (is_string($URLPath = $this->createUniqueURLPath($this->URLPath,$this->PostID))) {
 				$QueryString .= "url_path=:url_path, ";
 			}
@@ -162,10 +209,12 @@ class blog_admin {
 			$q->bindParam(":summary",$this->Summary);
 			$q->bindParam(":content",$this->Content);
 			$q->bindParam(":img",$this->Img);
+			$q->bindParam(":meta_title",$this->MetaTitle);
+			$q->bindParam(":meta_description",$this->MetaDescription);
 			if (is_string($URLPath)) {
 				$q->bindParam(":url_path",$URLPath);
 			}
-			$q->bindParam(":currentdatetime",$this->InitObj->CurrDateTime);
+			$q->bindParam(":currentdatetime",$this->CurrDateTime);
 			if ($this->Published) {
 				$Published = 1;
 			}

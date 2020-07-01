@@ -77,7 +77,7 @@ a.blog = (function(){
 								});
 								// Save
 								$('button[data-action="save"]').unbind('click').click(function(){
-									a.s.growl.create('Success','The changes has been saved',{});
+									my.saveBlog();
 								});
 							},100);
 						}});
@@ -90,19 +90,39 @@ a.blog = (function(){
 				a.s.loader.fs.remove();
 			});
 		},
+		saveBlog:function(){
+			a.s.loader.fs.create();
+			tinyMCE.triggerSave();
+			setTimeout(function(){
+				$.ajax({
+					type:'POST',
+					url:'./api/blog/save/',
+					data:$('form[name="edit_post"]').serialize(),
+					dataType:'json',
+					cache: false,
+					success:function(result) {
+						if (result.success) {
+							a.s.growl.create('Success','The changes was saved.',{});
+						}
+						else {
+							a.s.growl.create('Error','Unable to save changes. Reload and try again.',{});
+						}
+					}
+				}).done(function(){
+					a.s.loader.fs.remove();
+				});
+			},100);
+		},
 		initEditor:function(){
 			tinymce.init({
 				selector:'textarea.tinymce',
 				height: 500,
-				plugins: 'preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists textcolor wordcount imagetools contextmenu colorpicker textpattern help code',
+				plugins: 'preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount imagetools textpattern help code',
 				toolbar1: 'formatselect | bold italic strikethrough forecolor backcolor | link image | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat | fullscreen code',
 				image_advtab: true,
 				image_dimensions: false,
 				relative_urls: false,
-				content_css: [
-					'//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
-					'//www.tinymce.com/css/codepen.min.css'
-				],
+				content_css: [],
 				image_title: true,
 				file_picker_types: 'image file media',
 				file_picker_callback: function(cb, value, meta) {
