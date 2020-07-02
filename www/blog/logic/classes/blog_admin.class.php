@@ -278,6 +278,10 @@ class blog_admin {
 		}
 	}
 
+	public function listPostImages () {
+		return FALSE;
+	}
+
 	public function isAuthorized () {
 		$Authorized = FALSE;
 		if (is_object($this->DBObj)) {

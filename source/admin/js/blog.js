@@ -1,5 +1,6 @@
 a.blog = (function(){
 	var my = {
+		loaderContent:'<div class="inline-loader"><span class="spinner">&#9696;</span></div>',
 		listPage:function(){
 			a.s.loader.fs.create();
 			$.ajax({
@@ -68,10 +69,10 @@ a.blog = (function(){
 							$('#body').empty().append(content);
 							setTimeout(function(){
 								// Actions
-								my.initEditor();
+								my.initEditor(id);
 								// Select main image
 								$('button[data-action="select-main-image"]').unbind('click').click(function(){
-									my.filePicker.create(function(){
+									my.filePicker.create(id,function(){
 
 									},true,false);
 								});
@@ -113,7 +114,7 @@ a.blog = (function(){
 				});
 			},100);
 		},
-		initEditor:function(){
+		initEditor:function(postid){
 			tinymce.init({
 				selector:'textarea.tinymce',
 				height: 500,
@@ -126,16 +127,38 @@ a.blog = (function(){
 				image_title: true,
 				file_picker_types: 'image file media',
 				file_picker_callback: function(cb, value, meta) {
-					my.filePicker.create(cb,true,false);
+					my.filePicker.create(postid,cb,true,false);
 				}
 			});
 		},
 		filePicker:{
-			create:function(cb,fullpath,filename_only){
-				a.s.popup.create({
+			create:function(postid,cb,fullpath,filename_only){
+				var token = a.s.popup.create({
 					title:'Select image',
 					width:900,
-					height:500
+					height:500,
+					content:my.loaderContent,
+					ready:function(token){
+						$.ajax({
+							type:'GET',
+							url:'./api/blog/image/list/',
+							data:{
+								id:postid
+							},
+							dataType:'json',
+							cache: false,
+							success:function(result) {
+								console.log(result);
+								tpl.run({tpl:'./tpl/blog/imgpicker/main.ejs',data:result,cb:function(content){
+									$('#popupid_'+token+' .ic').empty().append(content);
+									setTimeout(function(){
+										// Actions
+										
+									},100);
+								}});
+							}
+						});
+					}
 				});
 			}
 		},
