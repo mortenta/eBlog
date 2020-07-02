@@ -1,6 +1,6 @@
-EmbedBlog is a LAMP based blog module that can be embedded with PHP on your site. It is based on the blog codebase used on www.itefy.com/blog/
+## This project is not yet finish, DON'T DOWNLOAD IT YET.
 
-The default path to the blog is www.yourdomain.com/blog/, but this can be reconfigured if needed.
+EmbedBlog is a LAMP based blog module that can be embedded with PHP on your site. It is based on the blog codebase used on www.itefy.com/blog/
 
 ## Installation
 

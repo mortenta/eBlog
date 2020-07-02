@@ -138,6 +138,24 @@ a.blog = (function(){
 					height:500
 				});
 			}
+		},
+		gotoPost:function(id){
+			$.ajax({
+				type:'GET',
+				url:'./api/blog/load/',
+				data:{
+					id:id
+				},
+				dataType:'json',
+				cache: false,
+				success:function(result) {
+					if (result.success && result.data) {
+						window.open('/blog/post/'+moment(result.data.time_published).format('Y-MM-DD')+'/'+result.data.url_path+'/');
+					}
+				}
+			}).done(function(){
+				
+			});
 		}
 	}
 	return my;
