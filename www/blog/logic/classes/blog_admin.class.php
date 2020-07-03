@@ -16,11 +16,13 @@ class blog_admin {
 	private $Img;
 	private $Published;
 	private $URLPath;
+	private $Filename;
 
 	function __construct () {
 		chdir(dirname(__FILE__));
 		require('../../config.php');
 		require_once('./blog_db.class.php');
+		require_once('./blog_gd.class.php');
 		$this->CurrDateTime = date("Y-m-d H:i:s",time());
 		$BlogDBObj = new blog_db;
 		if ($BlogDBObj->connectDB() && is_object($BlogDBObj->getDBObj())) {
@@ -103,7 +105,11 @@ class blog_admin {
 
 	public function getSiteName () {
 		return $this->SiteSettings['name'];
-	}	
+	}
+
+	public function getFilename () {
+		return $this->Filename;
+	}
 
 	/**
 	* Public functions
@@ -280,6 +286,46 @@ class blog_admin {
 
 	public function listPostImages () {
 		return FALSE;
+	}
+
+	public function uploadImage ($FileArray) {
+		if (is_numeric($this->PostID) && is_array($FileArray) && $FileArray['error'] == 0 && is_file($FileArray['tmp_name'])) {
+			// Create unique filename
+			$Pathinfo = pathinfo($FileArray['name']);
+			$Filename = date("Y-m-d").'-'.$this->toAscii($Pathinfo['filename']).'-'.substr(md5(uniqid(rand(),true)),0,10).'.'.$Pathinfo['extension'];
+			$this->Filename = $Filename;
+			// Scale and save
+			if (is_object($GD = new blog_gd)) {
+				$GD->setImgStr(file_get_contents($FileArray['tmp_name']));
+				$GD->setImageType($Pathinfo['extension']);
+				// Full imsage
+				if ($GD->create()) {
+					$GD->setNewWidth(1100);
+					if ($GD->getOrigWidth() > $GD->getNewWidth()) {
+						$GD->resize();
+					}
+					chdir(__DIR__);
+					$GD->saveFile('../../img/full/'.$Filename);
+				}
+			}
+			if (is_object($GD = new blog_gd)) {
+				$GD->setImgStr(file_get_contents($FileArray['tmp_name']));
+				$GD->setImageType($Pathinfo['extension']);
+				// Full imsage
+				if ($GD->create()) {
+					$GD->setNewWidth(500);
+					if ($GD->getOrigWidth() > $GD->getNewWidth()) {
+						$GD->resize();
+					}
+					chdir(__DIR__);
+					$GD->saveFile('../../img/tn/'.$Filename);
+				}
+			}
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
 	}
 
 	public function isAuthorized () {

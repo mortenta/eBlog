@@ -139,26 +139,115 @@ a.blog = (function(){
 					height:500,
 					content:my.loaderContent,
 					ready:function(token){
-						$.ajax({
-							type:'GET',
-							url:'./api/blog/image/list/',
-							data:{
-								id:postid
-							},
-							dataType:'json',
-							cache: false,
-							success:function(result) {
-								console.log(result);
-								tpl.run({tpl:'./tpl/blog/imgpicker/main.ejs',data:result,cb:function(content){
-									$('#popupid_'+token+' .ic').empty().append(content);
-									setTimeout(function(){
-										// Actions
-										
-									},100);
-								}});
+						tpl.run({tpl:'./tpl/blog/imgpicker/main.ejs',data:{},cb:function(content){
+							$('#popupid_'+token+' .ic').empty().append(content);
+							setTimeout(function(){
+								// Load file list
+								my.filePicker.listFiles(postid);
+								// Actions
+								$("#imgselector").unbind('change').change(function() {
+									my.filePicker.uploadFiles(postid,this.files,$('#popupid_'+token),function(){
+										// Reset file picker
+										$("#imgselector").val('');
+										// Reload list
+										my.filePicker.listFiles(postid);
+									});
+								});
+							},100);
+						}});
+					}
+				});
+			},
+			listFiles:function(postid){
+				console.log('list files for '+postid);
+				$.ajax({
+					type:'GET',
+					url:'./api/blog/image/list/',
+					data:{
+						id:postid
+					},
+					dataType:'json',
+					cache: false,
+					success:function(result) {
+						console.log(result);
+						
+					}
+				});
+			},
+			uploadFiles:function(postid,files,win,cb){
+				if (files.length>0) {
+					var uploadcount = 0;
+					$(files).each(function(i,file){
+						my.filePicker.uploadFile(postid,file,win,function(){
+							uploadcount++;
+							if (uploadcount==files.length) {
+								cb();
 							}
 						});
+					});
+				}
+			},
+			uploadFile:function(postid,file,win,cb_done){
+				var uid = 'fileupload_'+a.s.createToken();
+				// Create upload record
+				c = '<li class="file" id="'+uid+'">';
+				c += '<div class="info">';
+				c += '<span class="pct" data-fileupload-area="pct">1%</span><span class="filename">'+file.name.substring(0,50)+'</span>';
+				c += '<i class="icon" style="font-style:normal;" data-fileupload-action="close">&times;</i>';
+				c += '</div>';
+				c += '<div class="prog"><div class="bar" style="width:1%;" data-fileupload-area="progbar"></div></div>';
+				c += '</li>';
+				$('ul.uploadlist',win).append(c);
+				var upload_record =  $('#'+uid);
+				var pct_txt = $('#'+uid+' span[data-fileupload-area="pct"]');
+				var progbar = $('#'+uid+' div[data-fileupload-area="progbar"]');
+				var cancel = $('#'+uid+' i[data-fileupload-action="close"]');
+				var data = new FormData();
+				data.append('id',postid);
+				data.append('file',file);
+				var jqxhr = $.ajax({
+					type:'POST',
+					url:'./api/blog/image/upload/',
+					data:data,
+					processData:false,
+					contentType: false,
+					dataType:'text',
+					xhr:function(){
+						var xhr = new window.XMLHttpRequest();
+						xhr.upload.addEventListener("progress", function(evt) {
+							if (evt.lengthComputable) {
+								var percentComplete = Math.round((evt.loaded / evt.total)*100);
+								$(pct_txt).text(percentComplete+'%');
+								$(progbar).css('width',percentComplete+'%');
+							}
+						}, false);
+						return xhr;
+					},
+					success:function(result) {
+
+						console.log(result);
+
+						if (result.success) {
+							$('span[data-fileupload-area="pct"]',upload_record).text('Done!');
+							setTimeout(function(){
+								upload_record.remove();
+								cb_done(false);
+							},1000);
+						}
+						else {
+							$('span[data-fileupload-area="pct"]',upload_record).text('Error!');
+							setTimeout(function(){
+								upload_record.remove();
+								cb_done(false);
+							},1500);
+						}
 					}
+				}).done(function(){});
+				// Cancel button
+				$(cancel).unbind('click').click(function(){
+					jqxhr.abort();
+					upload_record.remove();
+					cb_done(false);
 				});
 			}
 		},
