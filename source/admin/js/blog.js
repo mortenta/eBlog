@@ -72,8 +72,8 @@ a.blog = (function(){
 								my.initEditor(id);
 								// Select main image
 								$('button[data-action="select-main-image"]').unbind('click').click(function(){
-									my.filePicker.create(id,function(){
-
+									my.filePicker.create(id,function(file){
+										$('input[name="img"]').val(file);
 									},true,false);
 								});
 								// Save
@@ -143,14 +143,14 @@ a.blog = (function(){
 							$('#popupid_'+token+' .ic').empty().append(content);
 							setTimeout(function(){
 								// Load file list
-								my.filePicker.listFiles(postid,$('#popupid_'+token+' div[data-area="imglist"]'));
+								my.filePicker.listFiles(postid,token,cb);
 								// Actions
 								$("#imgselector").unbind('change').change(function() {
 									my.filePicker.uploadFiles(postid,this.files,$('#popupid_'+token),function(){
 										// Reset file picker
 										$("#imgselector").val('');
 										// Reload list
-										my.filePicker.listFiles(postid,$('#popupid_'+token+' div[data-area="imglist"]'));
+										my.filePicker.listFiles(postid,token,cb);
 									});
 								});
 							},100);
@@ -158,7 +158,8 @@ a.blog = (function(){
 					}
 				});
 			},
-			listFiles:function(postid,area){
+			listFiles:function(postid,token,cb){
+				var area = $('#popupid_'+token+' div[data-area="imglist"]');
 				$.ajax({
 					type:'GET',
 					url:'./api/blog/image/list/',
@@ -172,7 +173,10 @@ a.blog = (function(){
 							tpl.run({tpl:'./tpl/blog/imgpicker/list.ejs',data:result,cb:function(content){
 								$(area).empty().append(content);
 								setTimeout(function(){
-									
+									$('li[data-action="select"]').unbind('click').click(function(){
+										cb('/blog/img/full/'+$(this).attr('data-filename'),{});
+										a.s.popup.remove(token,function(){});
+									});
 								},100);
 							}});
 						}

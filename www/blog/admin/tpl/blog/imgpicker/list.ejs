@@ -1,7 +1,7 @@
 <% if (list.length>0) { %>
 <ul class="icards" style="margin: 12px -8px;">
 	<% list.forEach(function(e){ %>
-		<li class="w20" style="cursor: pointer;" data-action="select" data-id="<%=e.filename%>">
+		<li class="w20" style="cursor: pointer;" data-action="select" data-filename="<%=e.filename%>">
 			<div style="background-color:#ddd;height: 100px;background-image: url('../img/tn/<%=e.filename%>');background-repeat: no-repeat;background-size: cover;background-position: center center;"></div>
 		</li>
 	<% }); %>
