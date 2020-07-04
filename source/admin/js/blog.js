@@ -143,14 +143,14 @@ a.blog = (function(){
 							$('#popupid_'+token+' .ic').empty().append(content);
 							setTimeout(function(){
 								// Load file list
-								my.filePicker.listFiles(postid);
+								my.filePicker.listFiles(postid,$('#popupid_'+token+' div[data-area="imglist"]'));
 								// Actions
 								$("#imgselector").unbind('change').change(function() {
 									my.filePicker.uploadFiles(postid,this.files,$('#popupid_'+token),function(){
 										// Reset file picker
 										$("#imgselector").val('');
 										// Reload list
-										my.filePicker.listFiles(postid);
+										my.filePicker.listFiles(postid,$('#popupid_'+token+' div[data-area="imglist"]'));
 									});
 								});
 							},100);
@@ -158,8 +158,7 @@ a.blog = (function(){
 					}
 				});
 			},
-			listFiles:function(postid){
-				console.log('list files for '+postid);
+			listFiles:function(postid,area){
 				$.ajax({
 					type:'GET',
 					url:'./api/blog/image/list/',
@@ -169,20 +168,25 @@ a.blog = (function(){
 					dataType:'json',
 					cache: false,
 					success:function(result) {
-						console.log(result);
-						
+						if (result.success) {
+							tpl.run({tpl:'./tpl/blog/imgpicker/list.ejs',data:result,cb:function(content){
+								$(area).empty().append(content);
+								setTimeout(function(){
+									
+								},100);
+							}});
+						}
+						else {
+							a.s.growl.create('Error','Unable to load images',{});
+						}
 					}
 				});
 			},
 			uploadFiles:function(postid,files,win,cb){
 				if (files.length>0) {
-					var uploadcount = 0;
 					$(files).each(function(i,file){
 						my.filePicker.uploadFile(postid,file,win,function(){
-							uploadcount++;
-							if (uploadcount==files.length) {
-								cb();
-							}
+							cb();
 						});
 					});
 				}
@@ -211,7 +215,7 @@ a.blog = (function(){
 					data:data,
 					processData:false,
 					contentType: false,
-					dataType:'text',
+					dataType:'json',
 					xhr:function(){
 						var xhr = new window.XMLHttpRequest();
 						xhr.upload.addEventListener("progress", function(evt) {
@@ -224,9 +228,6 @@ a.blog = (function(){
 						return xhr;
 					},
 					success:function(result) {
-
-						console.log(result);
-
 						if (result.success) {
 							$('span[data-fileupload-area="pct"]',upload_record).text('Done!');
 							setTimeout(function(){

@@ -285,7 +285,31 @@ class blog_admin {
 	}
 
 	public function listPostImages () {
-		return FALSE;
+		if (is_numeric($this->PostID)) {
+			$QueryString = "SELECT ";
+			$QueryString .= "filename ";
+			$QueryString .= "FROM ";
+			$QueryString .= "blog_post_image_map ";
+			$QueryString .= "WHERE ";
+			$QueryString .= "postid=:postid ";
+			$QueryString .= "ORDER BY ";
+			$QueryString .= "date_uploaded";
+			$q = $this->DBObj->prepare($QueryString);
+			$q->bindParam(":postid",$this->PostID);
+			$q->execute();
+			foreach ($q->fetchAll(PDO::FETCH_ASSOC) AS $Row) {
+				$OA[] = $Row;
+			}
+			if (is_array($OA)) {
+				return $OA;
+			}
+			else {
+				return FALSE;
+			}
+		}
+		else {
+			return FALSE;
+		}
 	}
 
 	public function uploadImage ($FileArray) {
@@ -313,7 +337,9 @@ class blog_admin {
 						$GD->resize();
 					}
 					chdir(__DIR__);
-					$GD->saveFile($DirPath.'full/'.$Filename);
+					if ($GD->saveFile($DirPath.'full/'.$Filename)) {
+						$FullSaved = TRUE;
+					}
 				}
 			}
 			if (is_object($GD = new blog_gd)) {
@@ -326,12 +352,43 @@ class blog_admin {
 						$GD->resize();
 					}
 					chdir(__DIR__);
-					$GD->saveFile($DirPath.'tn/'.$Filename);
+					if ($GD->saveFile($DirPath.'tn/'.$Filename)) {
+						$TNSaved = TRUE;
+					}
 				}
 			}
-			return TRUE;
+			if ($FullSaved && $TNSaved) {
+				// Create db record
+				$QueryString = "INSERT INTO ";
+				$QueryString .= "blog_post_image_map ";
+				$QueryString .= "SET ";
+				$QueryString .= "postid=:postid, ";
+				$QueryString .= "filename=:filename, ";
+				$QueryString .= "date_uploaded=:currentdatetime";
+				$q = $this->DBObj->prepare($QueryString);
+				$q->bindParam(":postid",$this->PostID);
+				$q->bindParam(":filename",$Filename);
+				$q->bindParam(":currentdatetime",$this->CurrDateTime);
+				if ($q->execute()) {
+					return TRUE;
+				}
+				else {
+					unlink($DirPath.'tn/'.$Filename);
+					unlink($DirPath.'full/'.$Filename);
+					$this->ErrorMsg = 'Unable to write to database';
+					return FALSE;
+				}
+			}
+			else {
+				// Delete files
+				unlink($DirPath.'tn/'.$Filename);
+				unlink($DirPath.'full/'.$Filename);
+				$this->ErrorMsg = 'Unable to resize and save image files';
+				return FALSE;
+			}
 		}
 		else {
+			$this->ErrorMsg = 'Missing file or postID';
 			return FALSE;
 		}
 	}
