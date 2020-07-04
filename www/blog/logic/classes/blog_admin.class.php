@@ -290,6 +290,14 @@ class blog_admin {
 
 	public function uploadImage ($FileArray) {
 		if (is_numeric($this->PostID) && is_array($FileArray) && $FileArray['error'] == 0 && is_file($FileArray['tmp_name'])) {
+			$DirPath = '../../img/';
+			// Create folders if non existent
+			if (!is_dir($DirPath.'tn/')) {
+				mkdir($DirPath.'tn/',0755);
+			}
+			if (!is_dir($DirPath.'full/')) {
+				mkdir($DirPath.'full/',0755);
+			}
 			// Create unique filename
 			$Pathinfo = pathinfo($FileArray['name']);
 			$Filename = date("Y-m-d").'-'.$this->toAscii($Pathinfo['filename']).'-'.substr(md5(uniqid(rand(),true)),0,10).'.'.$Pathinfo['extension'];
@@ -305,7 +313,7 @@ class blog_admin {
 						$GD->resize();
 					}
 					chdir(__DIR__);
-					$GD->saveFile('../../img/full/'.$Filename);
+					$GD->saveFile($DirPath.'full/'.$Filename);
 				}
 			}
 			if (is_object($GD = new blog_gd)) {
@@ -318,7 +326,7 @@ class blog_admin {
 						$GD->resize();
 					}
 					chdir(__DIR__);
-					$GD->saveFile('../../img/tn/'.$Filename);
+					$GD->saveFile($DirPath.'tn/'.$Filename);
 				}
 			}
 			return TRUE;
