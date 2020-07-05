@@ -1,6 +1,6 @@
-## This project is not yet finish, DON'T DOWNLOAD IT YET.
-
 EmbedBlog is a LAMP based blog module that can be embedded with PHP on your site. It is based on the blog codebase used on www.itefy.com/blog/
+
+![Editor](./readme_img/editor.png)
 
 ## Installation
 
