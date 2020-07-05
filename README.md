@@ -6,7 +6,7 @@ EmbedBlog is a LAMP based blog module that can be embedded in a static PHP site.
 
 ## Features
 * Dynamic, lightweight AJAX based admin interface
-* Separate content and meta information
+* Separate content and meta information (why, you say? If you need to include HTML in the summary, it will not affect the plain text meta information)
 * Heading, summary, main picture and content editor (TinyMCE)
 * Automatic image resizing and compressing to both thumbnail and full image
 * Image picker with batch image uploading and processing
