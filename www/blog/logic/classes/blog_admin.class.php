@@ -290,6 +290,38 @@ class blog_admin {
 		}
 	}
 
+	public function deletePost () {
+		if (is_numeric($this->PostID)) {
+			// List and delete blog post images
+			if (is_array($ImageList = $this->listPostImages())) {
+				$DirPath = '../../img/';
+				foreach ($ImageList as $Image) {
+					unlink($DirPath.'tn/'.$Image['filename']);
+					unlink($DirPath.'full/'.$Image['filename']);
+				}
+			}
+			// Delete blog post
+			$QueryString = "DELETE FROM ";
+			$QueryString .= "blog_posts ";
+			$QueryString .= "WHERE ";
+			$QueryString .= "id=:id ";
+			$QueryString .= "LIMIT 1";
+			$q = $this->DBObj->prepare($QueryString);
+			$q->bindParam(":id",$this->PostID);
+			if ($q->execute()) {
+				return TRUE;
+			}
+			else {
+				$this->ErrorMsg = 'Unable to delete post in database';
+				return FALSE;
+			}
+		}
+		else {
+			$this->ErrorMsg = 'Invalid post ID';
+			return FALSE;
+		}
+	}
+
 	public function loadPost () {
 		if (is_numeric($this->PostID)) {
 			$QueryString = "SELECT ";
@@ -336,6 +368,7 @@ class blog_admin {
 	public function listPostImages () {
 		if (is_numeric($this->PostID)) {
 			$QueryString = "SELECT ";
+			$QueryString .= "id, ";
 			$QueryString .= "filename ";
 			$QueryString .= "FROM ";
 			$QueryString .= "blog_post_image_map ";

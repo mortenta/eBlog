@@ -89,6 +89,10 @@ a.blog = (function(){
 								$('button[data-action="save"]').unbind('click').click(function(){
 									my.saveBlog();
 								});
+								// Delete
+								$('button[data-action="delete"]').unbind('click').click(function(){
+									my.deletePost(id);
+								});
 							},100);
 						}});
 					}
@@ -160,6 +164,31 @@ a.blog = (function(){
 					}
 				}
 			});
+		},
+		deletePost:function(id){
+			if (confirm('Do you really want to delete this blog post?')) {
+				a.s.loader.fs.create();
+				$.ajax({
+					type:'POST',
+					url:'./api/blog/delete/',
+					data:{
+						id:id
+					},
+					dataType:'json',
+					cache: false,
+					success:function(result) {
+						if (result.success) {
+							a.s.growl.create('Success','The blog post has been deleted',{});
+							location.hash = '/blog/list/';
+						}
+						else {
+							a.s.growl.create('Error',result.error,{});
+						}
+					}
+				}).done(function(){
+					a.s.loader.fs.remove();
+				});
+			}
 		},
 		initEditor:function(postid){
 			tinymce.init({
@@ -235,9 +264,14 @@ a.blog = (function(){
 			},
 			uploadFiles:function(postid,files,win,cb){
 				if (files.length>0) {
+					var totalfiles = files.length;
+					var uploadedfiles = 0;
 					$(files).each(function(i,file){
 						my.filePicker.uploadFile(postid,file,win,function(){
-							cb();
+							uploadedfiles++;
+							if (uploadedfiles===totalfiles) {
+								cb();
+							}
 						});
 					});
 				}
