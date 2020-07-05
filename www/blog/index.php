@@ -7,8 +7,8 @@ if (is_object($BlogViewerObj)) {
 chdir(dirname(__FILE__));
 $SiteSettings = $BlogViewerObj->getSiteSettings();
 // Render site
-$title = $PostArray['meta_title'];
-$description = $PostArray['summary'];
+$title = $SiteSettings['default_meta_title'];
+$description = $SiteSettings['default_meta_description'];
 $type = 'article';
 $url_path = '/blog/post/'.date("Y-m-d",strtotime($PostArray['time_published'])).'/'.$PostArray['url_path'].'/';
 $image = '/blog/img/full/'.$PostArray['img'];
