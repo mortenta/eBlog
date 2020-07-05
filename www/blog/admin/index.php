@@ -47,11 +47,11 @@ if (is_object($BlogAdminObj) && $BlogAdminObj->isAuthorized()) {
 				<form onsubmit="return false;">
 					<div class="form-group space">
 						<label>Username</label>
-						<input type="email" name="username" value="username@example.com" placeholder="Username">
+						<input type="email" name="username" value="" placeholder="Username">
 					</div>
 					<div class="form-group space">
 						<label>Password</label>
-						<input type="password" name="password" value="password" placeholder="Password">
+						<input type="password" name="password" value="" placeholder="Password">
 					</div>
 					<div class="msg">
 						
