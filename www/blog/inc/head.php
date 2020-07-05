@@ -24,7 +24,7 @@ $hide = FALSE;
 	<body style="<?php if (is_string($bgColor)) { print "background-color: ".$bgColor.";"; } ?>">
 		<div id="head">
 			<div class="inner">
-				<a href="/"><img src="https://via.placeholder.com/90x40/000/FFFFFF/?text=LOGO" alt=""></a>
+				<a href="/" style="color:#fff;text-decoration:none;font-size: 1.4em;position: relative;top: 5px;"><?php print $SiteSettings['name']; ?></a>
 				<nav class="menu" id="mainmenu">
 					<label for="menutoggle" class="togglebars"><i style="font-style:normal;">&#x2630;</i></label>
 					<ul id="menutoggle">

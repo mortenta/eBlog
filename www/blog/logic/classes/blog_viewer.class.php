@@ -3,14 +3,17 @@ class blog_viewer {
 
 	private $DBObj;
 	private $URLPath;
+	private $SiteSettings;
 
 	function __construct () {
 		chdir(dirname(__FILE__));
+		require('../../config.php');
 		require_once('./blog_db.class.php');
 		$BlogDBObj = new blog_db;
 		if ($BlogDBObj->connectDB() && is_object($BlogDBObj->getDBObj())) {
 			$this->DBObj = $BlogDBObj->getDBObj();
 		}
+		$this->SiteSettings = $SiteSettings;
 	}
 
 
@@ -32,7 +35,9 @@ class blog_viewer {
 	* Getters
 	*/
 
-
+	public function getSiteSettings () {
+		return $this->SiteSettings;
+	}
 
 	/**
 	* Public functions

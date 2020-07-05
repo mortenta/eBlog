@@ -5,28 +5,30 @@ if (is_object($BlogViewerObj)) {
 	$PostList = $BlogViewerObj->listPosts();
 }
 chdir(dirname(__FILE__));
+$SiteSettings = $BlogViewerObj->getSiteSettings();
 // Render site
 $title = $PostArray['meta_title'];
 $description = $PostArray['summary'];
 $type = 'article';
 $url_path = '/blog/post/'.date("Y-m-d",strtotime($PostArray['time_published'])).'/'.$PostArray['url_path'].'/';
 $image = '/blog/img/full/'.$PostArray['img'];
-$head = '<script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=5a5390f39a57d200135faa0a&product=inline-share-buttons"></script>'."\n";
-$head .= '<script>var headBgFixedBlack = true;</script>'."\n";
-//$bgColor = 'rgb(252,252,252)';
+if (is_string($SiteSettings['sharethis_property_id']) && strlen($SiteSettings['sharethis_property_id'])>1) {
+	$head .= "\t\t".'<script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property='.$SiteSettings['sharethis_property_id'].'&product=inline-share-buttons"></script>'."\n";
+}
+if (is_string($SiteSettings['ga_ua_id']) && strlen($SiteSettings['ga_ua_id'])>1) {
+	$head .= "\t\t".'<!-- Global site tag (gtag.js) - Google Analytics -->'."\n";
+	$head .= "\t\t".'<script async src="https://www.googletagmanager.com/gtag/js?id='.$SiteSettings['ga_ua_id'].'"></script>'."\n";
+	$head .= "\t\t".'<script>'."\n";
+	$head .= "\t\t\t".'window.dataLayer = window.dataLayer || [];'."\n";
+	$head .= "\t\t\t".'function gtag(){dataLayer.push(arguments);}'."\n";
+	$head .= "\t\t\t".'gtag(\'js\', new Date());'."\n";
+	$head .= "\t\t\t".'gtag(\'config\', \''.$SiteSettings['ga_ua_id'].'\');'."\n";
+	$head .= "\t\t".'</script>'."\n";
+}
 include('./inc/head.php');
 ?>
 
-<div class="mainc dark head_default" style="background:url('./img/head_bg.jpg') no-repeat fixed center center; background-size:cover;">
-	<div class="mainc_inner vpad-5x-top">
-		<div class="jumbotron">
-			<h1>Blog</h1>
-			<h2>Updates, tips & tricks and more</h2>
-		</div>
-	</div>
-</div>
-
-<div class="mainc light">
+<div class="mainc light" style="margin-top: 30px;">
 	<div class="mainc_inner vpad-3x">
 		<div class="icontainer break-md">
 			<ul class="bloglist">
