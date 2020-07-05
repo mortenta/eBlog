@@ -74,7 +74,7 @@ a.blog = (function(){
 								$('button[data-action="select-main-image"]').unbind('click').click(function(){
 									my.filePicker.create(id,function(file){
 										$('input[name="img"]').val(file);
-									},true,false);
+									},false,true);
 								});
 								// Publish change
 								$('input[type="checkbox"][name="published"]').unbind('change').change(function(){
@@ -208,7 +208,7 @@ a.blog = (function(){
 			});
 		},
 		filePicker:{
-			create:function(postid,cb,fullpath,filename_only){
+			create:function(postid,cb,full_url,filename_only){
 				var token = a.s.popup.create({
 					title:'Select image',
 					width:900,
@@ -219,14 +219,14 @@ a.blog = (function(){
 							$('#popupid_'+token+' .ic').empty().append(content);
 							setTimeout(function(){
 								// Load file list
-								my.filePicker.listFiles(postid,token,cb);
+								my.filePicker.listFiles(postid,token,cb,full_url,filename_only);
 								// Actions
 								$("#imgselector").unbind('change').change(function() {
 									my.filePicker.uploadFiles(postid,this.files,$('#popupid_'+token),function(){
 										// Reset file picker
 										$("#imgselector").val('');
 										// Reload list
-										my.filePicker.listFiles(postid,token,cb);
+										my.filePicker.listFiles(postid,token,cb,full_url,filename_only);
 									});
 								});
 							},100);
@@ -234,7 +234,7 @@ a.blog = (function(){
 					}
 				});
 			},
-			listFiles:function(postid,token,cb){
+			listFiles:function(postid,token,cb,full_url,filename_only){
 				var area = $('#popupid_'+token+' div[data-area="imglist"]');
 				$.ajax({
 					type:'GET',
@@ -250,7 +250,18 @@ a.blog = (function(){
 								$(area).empty().append(content);
 								setTimeout(function(){
 									$('li[data-action="select"]').unbind('click').click(function(){
-										cb('/blog/img/full/'+$(this).attr('data-filename'),{});
+										if (filename_only) {
+											cb($(this).attr('data-filename'),{});
+										}
+										else {
+											if (full_url) {
+												// Update with full url
+												cb('/blog/img/full/'+$(this).attr('data-filename'),{});
+											}
+											else {
+												cb('/blog/img/full/'+$(this).attr('data-filename'),{});
+											}
+										}
 										a.s.popup.remove(token,function(){});
 									});
 								},100);
