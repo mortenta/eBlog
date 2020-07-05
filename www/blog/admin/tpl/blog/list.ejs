@@ -19,6 +19,7 @@
 			<th>Title</th>
 			<th class="right">Created</th>
 			<th class="right">Updated</th>
+			<th class="center">Published</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -27,6 +28,7 @@
 			<td><a href="#/blog/edit/<%=e.id%>/"><%=e.title%></a></td>
 			<td class="sm right"><%=moment(e.time_created).format('ddd MMM Do, HH:mm')%></td>
 			<td class="sm right"><%=moment(e.time_updated).format('ddd MMM Do, HH:mm')%></td>
+			<td class="center" style="color:<%=e.published==1?'green':'red'%>;">&#11044;</td>
 		</tr>
 		<% }); %>
 	</tbody>

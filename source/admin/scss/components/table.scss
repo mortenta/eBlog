@@ -11,6 +11,10 @@ table.table {
 			td.right {
 				text-align: right;
 			}
+			th.center,
+			td.center {
+				text-align: center;
+			}
 		}
 	}
 	thead {
