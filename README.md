@@ -1,8 +1,11 @@
 EmbedBlog is a LAMP based blog module that can be embedded in a static PHP site. It is based on the blog codebase used on www.itefy.com/blog/
 
-![eBlog editor](./readme_img/editor.png)
+![eBlog editor](./readme_img/edit.png)
+
+![Select image](./readme_img/select_image.png)
 
 ## Features
+* Dynamic AJAX based admin interface
 * Separate content and meta information
 * Heading, summary, main picture and content editor (TinyMCE)
 * Automatic image resizing and compressing to both thumbnail and full image
@@ -10,6 +13,7 @@ EmbedBlog is a LAMP based blog module that can be embedded in a static PHP site.
 * Image picker shows only the current blog post images
 * Publish and unpublish articles
 * Per blog post URL path customization
+* SCSS and JS source code included
 
 ### Requirements
 - PHP 7.* with GD (may work with PHP 5.x also, but untested)
