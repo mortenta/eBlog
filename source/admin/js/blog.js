@@ -76,6 +76,15 @@ a.blog = (function(){
 										$('input[name="img"]').val(file);
 									},true,false);
 								});
+								// Publish change
+								$('input[type="checkbox"][name="published"]').unbind('change').change(function(){
+									if ($(this).is(':checked')) {
+										my.publishPost(id);
+									}
+									else {
+										my.unpublishPost(id);
+									}
+								});
 								// Save
 								$('button[data-action="save"]').unbind('click').click(function(){
 									my.saveBlog();
@@ -113,6 +122,44 @@ a.blog = (function(){
 					a.s.loader.fs.remove();
 				});
 			},100);
+		},
+		publishPost:function(id){
+			$.ajax({
+				type:'POST',
+				url:'./api/blog/publish/',
+				data:{
+					id:id
+				},
+				dataType:'json',
+				cache: false,
+				success:function(result) {
+					if (result.success) {
+						a.s.growl.create('Success','The blog post has been published',{});
+					}
+					else {
+						a.s.growl.create('Error','Unable to publish blog post',{});
+					}
+				}
+			});
+		},
+		unpublishPost:function(id){
+			$.ajax({
+				type:'POST',
+				url:'./api/blog/unpublish/',
+				data:{
+					id:id
+				},
+				dataType:'json',
+				cache: false,
+				success:function(result) {
+					if (result.success) {
+						a.s.growl.create('Success','The blog post has been unpublished',{});
+					}
+					else {
+						a.s.growl.create('Error','Unable to unpublish blog post',{});
+					}
+				}
+			});
 		},
 		initEditor:function(postid){
 			tinymce.init({

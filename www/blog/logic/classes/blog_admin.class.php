@@ -241,6 +241,55 @@ class blog_admin {
 		}
 	}
 
+	public function publishPost () {
+		if (is_numeric($this->PostID)) {
+			$QueryString = "UPDATE ";
+			$QueryString .= "blog_posts ";
+			$QueryString .= "SET ";
+			$QueryString .= "published=1, ";
+			$QueryString .= "time_published = IF(time_published IS NULL, NOW(), time_published) ";
+			$QueryString .= "WHERE ";
+			$QueryString .= "id=:bid ";
+			$QueryString .= "LIMIT 1";
+			$q = $this->DBObj->prepare($QueryString);
+			$q->bindParam(":bid",$this->PostID);
+			if ($q->execute()) {
+				return TRUE;
+			}
+			else {
+				return FALSE;
+			}
+		}
+		else {
+			$this->ErrorMsg = 'Invalid PostID';
+			return FALSE;
+		}
+	}
+
+	public function unpublishPost () {
+		if (is_numeric($this->PostID)) {
+			$QueryString = "UPDATE ";
+			$QueryString .= "blog_posts ";
+			$QueryString .= "SET ";
+			$QueryString .= "published=0 ";
+			$QueryString .= "WHERE ";
+			$QueryString .= "id=:bid ";
+			$QueryString .= "LIMIT 1";
+			$q = $this->DBObj->prepare($QueryString);
+			$q->bindParam(":bid",$this->PostID);
+			if ($q->execute()) {
+				return TRUE;
+			}
+			else {
+				return FALSE;
+			}
+		}
+		else {
+			$this->ErrorMsg = 'Invalid PostID';
+			return FALSE;
+		}
+	}
+
 	public function loadPost () {
 		if (is_numeric($this->PostID)) {
 			$QueryString = "SELECT ";
@@ -472,7 +521,33 @@ class blog_admin {
 	}
 
 	public function signOut () {
-		
+		if (is_object($this->DBObj)) {
+			if (isset($_COOKIE[$this->CookieName])) {
+				$QueryString = "UPDATE ";
+				$QueryString .= "blog_admins ";
+				$QueryString .= "SET ";
+				$QueryString .= "sid=NULL, ";
+				$QueryString .= "exp=NULL ";
+				$QueryString .= "WHERE ";
+				$QueryString .= "sid=:sid ";
+				$QueryString .= "LIMIT 1";
+				$q = $this->DBObj->prepare($QueryString);
+				$q->bindParam(":sid",$_COOKIE[$this->CookieName]);
+				if ($q->execute()) {
+					return TRUE;
+				}
+				else {
+					return FALSE;
+				}
+			}
+			else {
+				// Cookie not set
+				return FALSE;
+			}
+		}
+		else {
+			return FALSE;
+		}
 	}
 
 
