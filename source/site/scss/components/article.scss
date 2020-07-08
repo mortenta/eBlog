@@ -81,15 +81,43 @@
 			margin: 0 auto;
 		}
 		table {
-			border: 1px solid #F0F2F4;
 			margin-bottom: 1.5em;
+			border: 1px solid darken(#F0F2F4,10%);
+			th {
+				background-color: $color_dark_grey;
+				color: #fff;
+				text-align: left;
+				vertical-align: top;
+				padding: 10px;
+				font-weight: 400px;
+			}
 			td {
+				font-size: inherit;
 				padding: 5px;
 				border: none;
+				font-size: 1.2rem !important;
+				padding: 10px;
+				vertical-align: top;
+				color: #707b84;
+				ul {
+					margin-bottom: 0;
+					li {
+						font-size: 1.2rem !important;
+					}
+				}
+				p {
+					font-size: 1.2rem !important;
+				}
 			}
-			tr:nth-child(odd) {
+			tr {
+				border-bottom: 1px solid darken(#F0F2F4,10%);
+			}
+			tr:last-child {
+				border-bottom: none;
+			}
+			/*tr:nth-child(odd) {
 				background-color: #F0F2F4;
-			}
+			}*/
 		}
 	}
 	aside {
