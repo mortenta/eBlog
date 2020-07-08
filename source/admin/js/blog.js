@@ -359,7 +359,7 @@ a.blog = (function(){
 				cache: false,
 				success:function(result) {
 					if (result.success && result.data) {
-						window.open('/blog/post/'+moment(result.data.time_published).format('Y-MM-DD')+'/'+result.data.url_path+'/');
+						window.open('/blog/post/'+result.data.url_path+'/');
 					}
 				}
 			}).done(function(){

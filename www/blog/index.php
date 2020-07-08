@@ -37,7 +37,7 @@ include('./inc/head.php');
 						foreach ($PostList as $Post) {
 				?>
 				<li>
-					<div class="picture" style="background: url('/blog/img/tn/<?php print $Post['img']; ?>') no-repeat center center;background-size: cover;" onclick="location.href='/blog/post/<?php print date("Y-m-d",strtotime($Post['time_published'])).'/'.$Post['url_path'].'/'; ?>'">
+					<div class="picture" style="background: url('/blog/img/tn/<?php print $Post['img']; ?>') no-repeat center center;background-size: cover;" onclick="location.href='/blog/post/<?php print $Post['url_path'].'/'; ?>'">
 						<div class="date">
 							<div class="m"><?php print date("M",strtotime($Post['time_published'])); ?></div>
 							<div class="d"><?php print date("j",strtotime($Post['time_published'])); ?></div>
@@ -45,7 +45,7 @@ include('./inc/head.php');
 						</div>
 					</div>
 					<div class="content">
-						<h2><a href="/blog/post/<?php print date("Y-m-d",strtotime($Post['time_published'])).'/'.$Post['url_path'].'/'; ?>"><?php print $Post['title']; ?></a></h2>
+						<h2><a href="/blog/post/<?php print $Post['url_path'].'/'; ?>"><?php print $Post['title']; ?></a></h2>
 						<div class="summary"><?php print $Post['summary']; ?></div>
 						<?php if (is_array($Post['taglist'])) { ?>
 						<ul class="taglist">
