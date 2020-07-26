@@ -123,6 +123,12 @@
 			6px 6px,
 			6px 6px;
 	}
+	select.inline {
+		display: inline;
+	}
+	select.white {
+		background-color: #fff;
+	}
 	.selectinput {
 		clear:both;
 		border: 1px solid #dadada;

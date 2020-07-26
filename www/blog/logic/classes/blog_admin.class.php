@@ -17,6 +17,7 @@ class blog_admin {
 	private $Published;
 	private $URLPath;
 	private $Filename;
+	private $Display;
 
 	function __construct () {
 		chdir(dirname(__FILE__));
@@ -91,6 +92,18 @@ class blog_admin {
 		return TRUE;
 	}
 
+	// List filters
+
+	public function setDisplay ($string) {
+		if (in_array(strtolower($string),array('all','published','unpublished'))) {
+			$this->Display = strtolower($string);
+		}
+		else {
+			$this->Display = 'all';
+		}
+		return TRUE;
+	}
+
 	/**
 	* Getters
 	*/
@@ -126,8 +139,17 @@ class blog_admin {
 		$QueryString .= "blog_posts.title ";
 		$QueryString .= "FROM ";
 		$QueryString .= "blog_posts ";
+		$QueryString .= "WHERE ";
+		if ($this->Display=='published') {
+			$QueryString .= "published=1 ";
+		}
+		elseif ($this->Display=='unpublished') {
+			$QueryString .= "published=0 ";
+		}
+		else {
+			$QueryString .= "(published=1 OR published=0) ";
+		}
 		$QueryString .= "ORDER BY time_updated DESC";
-		$QueryString .= "";
 		$q = $this->DBObj->prepare($QueryString);
 		$q->execute();
 		foreach ($q->fetchAll(PDO::FETCH_ASSOC) AS $Row) {
