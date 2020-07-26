@@ -84,7 +84,7 @@ a.blog = (function(){
 								my.initEditor(id);
 								// Select main image
 								$('button[data-action="select-main-image"]').unbind('click').click(function(){
-									my.filePicker.create(id,function(file){
+									my.imgPicker.create(id,function(file){
 										$('input[name="img"]').val(file);
 									},false,true);
 								});
@@ -215,11 +215,18 @@ a.blog = (function(){
 				image_title: true,
 				file_picker_types: 'image file media',
 				file_picker_callback: function(cb, value, meta) {
-					my.filePicker.create(postid,cb,true,false);
+					if (meta.filetype=='file') {
+						// Pages
+						my.pagePicker.create(cb);
+					}
+					else {
+						// Images
+						my.imgPicker.create(postid,cb,true,false);
+					}
 				}
 			});
 		},
-		filePicker:{
+		imgPicker:{
 			create:function(postid,cb,full_url,filename_only){
 				var token = a.s.popup.create({
 					title:'Select image',
@@ -231,14 +238,14 @@ a.blog = (function(){
 							$('#popupid_'+token+' .ic').empty().append(content);
 							setTimeout(function(){
 								// Load file list
-								my.filePicker.listFiles(postid,token,cb,full_url,filename_only);
+								my.imgPicker.listFiles(postid,token,cb,full_url,filename_only);
 								// Actions
 								$("#imgselector").unbind('change').change(function() {
-									my.filePicker.uploadFiles(postid,this.files,$('#popupid_'+token),function(){
+									my.imgPicker.uploadFiles(postid,this.files,$('#popupid_'+token),function(){
 										// Reset file picker
 										$("#imgselector").val('');
 										// Reload list
-										my.filePicker.listFiles(postid,token,cb,full_url,filename_only);
+										my.imgPicker.listFiles(postid,token,cb,full_url,filename_only);
 									});
 								});
 							},100);
@@ -290,7 +297,7 @@ a.blog = (function(){
 					var totalfiles = files.length;
 					var uploadedfiles = 0;
 					$(files).each(function(i,file){
-						my.filePicker.uploadFile(postid,file,win,function(){
+						my.imgPicker.uploadFile(postid,file,win,function(){
 							uploadedfiles++;
 							if (uploadedfiles===totalfiles) {
 								cb();
@@ -357,6 +364,61 @@ a.blog = (function(){
 					jqxhr.abort();
 					upload_record.remove();
 					cb_done(false);
+				});
+			}
+		},
+		pagePicker:{
+			create:function(cb){
+				var token = a.s.popup.create({
+					title:'Select page',
+					width:900,
+					height:500,
+					content:my.loaderContent,
+					ready:function(token){
+						tpl.run({tpl:'./tpl/blog/pagepicker/main.ejs',data:{},cb:function(content){
+							$('#popupid_'+token+' .ic').empty().append(content);
+							setTimeout(function(){
+								// Load file list
+								my.pagePicker.listPages(token,cb);
+								// Actions
+								$('#popupid_'+token+' select[data-filter="display"]').unbind('change').change(function(){
+									my.pagePicker.listPages(token,cb);
+								});
+							},100);
+						}});
+					}
+				});
+			},
+			listPages:function(token,cb){
+				var area = $('#popupid_'+token+' div[data-area="pagelist"]');
+				$(area).empty().append(my.loaderContent);
+				$.ajax({
+					type:'GET',
+					url:'./api/blog/list/',
+					data:{
+						display:$('#popupid_'+token+' select[data-filter="display"]').val()
+					},
+					dataType:'json',
+					cache: false,
+					success:function(result) {
+						if (result.success) {
+							tpl.run({tpl:'./tpl/blog/pagepicker/list.ejs',data:result,cb:function(content){
+								$(area).empty().append(content);
+								setTimeout(function(){
+									$('button[data-action="select"]').unbind('click').click(function(){
+										cb('/blog/post/'+$(this).attr('data-path')+'/',{
+											id:$(this).attr('data-id'),
+											title:$(this).attr('data-title')
+										});
+										a.s.popup.remove(token,function(){});
+									});
+								},100);
+							}});
+						}
+						else {
+							a.s.growl.create('Error','Unable to load pages',{});
+						}
+					}
 				});
 			}
 		},
