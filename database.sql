@@ -1,3 +1,16 @@
+# ************************************************************
+# Sequel Pro SQL dump
+# Version 5446
+#
+# https://www.sequelpro.com/
+# https://github.com/sequelpro/sequelpro
+#
+# Host: 127.0.0.1 (MySQL 5.7.22)
+# Database: embedblog
+# Generation Time: 2020-07-28 11:27:26 +0000
+# ************************************************************
+
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -37,6 +50,23 @@ CREATE TABLE `blog_post_image_map` (
 
 
 
+# Dump of table blog_post_relations
+# ------------------------------------------------------------
+
+CREATE TABLE `blog_post_relations` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `postid` int(11) unsigned NOT NULL,
+  `relpostid` int(11) unsigned NOT NULL,
+  `order` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `blog_post_relations_post` (`postid`),
+  KEY `blog_post_relations_relpost` (`relpostid`),
+  CONSTRAINT `blog_post_relations_post` FOREIGN KEY (`postid`) REFERENCES `blog_posts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `blog_post_relations_relpost` FOREIGN KEY (`relpostid`) REFERENCES `blog_posts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 # Dump of table blog_post_tag_map
 # ------------------------------------------------------------
 
@@ -69,8 +99,10 @@ CREATE TABLE `blog_posts` (
   `content` longtext,
   `meta_title` varchar(255) DEFAULT NULL,
   `meta_description` varchar(255) DEFAULT NULL,
+  `notes` longtext,
   PRIMARY KEY (`id`),
-  KEY `url_path` (`url_path`)
+  KEY `url_path` (`url_path`),
+  FULLTEXT KEY `fulltext` (`title`,`summary`,`meta_title`,`meta_description`,`content`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
