@@ -1,0 +1,62 @@
+ul.blocklist {
+	list-style: none;
+	>li {
+		display: table;
+		table-layout: auto;
+		width: 100%;
+		background-color: #fff;
+		border: 1px solid #ddd;
+		margin-bottom: 5px;
+		>div {
+			display: table-cell;
+			vertical-align: middle;
+			width: auto;
+			>i {
+				display: inline-block;
+				padding: 8px 10px;
+				font-style: normal;
+				color: #ddd;
+				cursor: move;
+			}
+			>i.normal {
+				cursor: default;
+			}
+			>span {
+				display: block;
+				padding: 8px;
+				>a {
+					color:#515760;
+					>b {
+						display: inline-block;
+						text-overflow: ellipsis;
+						overflow: hidden; 
+						width: 350px; 
+						height: 1.2em; 
+						white-space: nowrap;
+						font-weight: 100;
+					}
+					>span {
+						color:#0092DC;
+					}
+				}
+				a:hover {
+					text-decoration:none;
+				}
+			}
+			>button {
+				float: right;
+				padding: 8px 10px;
+			}
+		}
+		>div.icon {
+			width: 35px;
+			border-right: 1px solid #ddd;
+		}
+		>div:last-child {
+			text-align: right;
+		}
+	}
+	>li:after {
+		clear: both;
+	}
+}

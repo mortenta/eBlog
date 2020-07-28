@@ -1,0 +1,23 @@
+<% if (list && list.length>0) { %>
+<ul class="blocklist">
+	<% list.forEach(function(e){ %>
+	<li data-id="<%=e.id%>">
+		<div class="icon">
+			<i>&#x2630;</i>
+		</div>
+		<div>
+			<span><a onclick="a.blog.edit.gotoPost(<%=e.id%>);"><b><%=e.title%></b> <span>&#x293B;</span></a></span>
+		</div>
+		<div>
+			<button class="btn btn-link-red" data-action="delete-related" data-id="<%=e.id%>" data-title="<%=e.title%>">&#x1F5D1;</button>
+		</div>
+	</li>
+	<% }); %>
+</ul>
+<% } else { %>
+
+<div class="emptymsg">
+	No articles found
+</div>
+
+<% } %>

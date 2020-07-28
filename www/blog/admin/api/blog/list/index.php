@@ -4,6 +4,10 @@ $BlogAdminObj = new blog_admin;
 $OA['success'] = FALSE;
 if (is_object($BlogAdminObj)) {
 	$BlogAdminObj->setDisplay($_REQUEST['display']);
+	$BlogAdminObj->setSkipID($_REQUEST['skipid']);
+	$BlogAdminObj->setQuery($_REQUEST['q']);
+	$BlogAdminObj->setLimit($_REQUEST['limit']);
+	$BlogAdminObj->setOffset($_REQUEST['offset']);
 	$OA['success'] = TRUE;
 	$OA['list'] = $BlogAdminObj->listPosts();
 }

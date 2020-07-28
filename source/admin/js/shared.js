@@ -235,6 +235,61 @@ a.s = (function(){
 				},timeout);
 			}
 		},
+		tabbox:{
+			init:function(){
+				$('div.itabbox').each(function(){
+					my.tabbox.initTabBox(this,false);
+				});
+			},
+			initTabBox:function(box,loadtab){
+				var loadindex = 0;
+				var tabs = $('>ul.itabs>li',box);
+				var boxes = $('>.itabcontent>div',box);
+				// Reset
+				$(tabs).removeClass('active');
+				$(boxes).hide();
+				if ((typeof(loadtab) == 'number') && boxes.length >= loadtab) {
+					loadindex = loadtab;
+				}
+				if (tabs.length != 0 && tabs.length == boxes.length) {
+					$(tabs[loadindex]).addClass('active');
+					$(boxes[loadindex]).show();
+					$(tabs).unbind('click').click(function(){
+						$('>ul.itabs>li.active',box).removeClass('active');
+						$(this).addClass('active');
+						$(boxes).hide();
+						$(boxes[$(this).index()]).show();
+					});
+				}
+				else {
+					return false;
+				}
+			},
+			changeTab:function(box,loadtab){
+				var loadindex = 0;
+				var tabs = $('>ul.itabs>li',box);
+				var boxes = $('>.itabcontent>div',box);
+				$(tabs).removeClass('active');
+				$(boxes).hide();
+				if ((typeof(loadtab) == 'number') && boxes.length >= loadtab) {
+					loadindex = loadtab;
+				}
+				else if ((typeof(loadtab) == 'string')) {
+					tabs.each(function(i,e){
+						if ($(e).attr('data-tab-id')==loadtab) {
+							loadindex = i;
+						}
+					});
+				}
+				if (tabs.length != 0 && tabs.length == boxes.length) {
+					$(tabs[loadindex]).addClass('active');
+					$(boxes[loadindex]).show();
+				}
+				else {
+					return false;
+				}
+			}
+		},
 		keymng:{
 			init:function(){
 				$(document).keydown(function(e){
@@ -266,8 +321,6 @@ a.s = (function(){
 	}
 	return my;
 }());
-
-
 
 // Template engine, requires ejs and jQuery
 var tpl = (function(){
@@ -318,3 +371,12 @@ var tpl = (function(){
 		tpl_cache:[]
 	}
 }());
+
+function add3Dots (string, limit) {
+	var dots = "...";
+	if(string.length > limit) {
+		// you can also use substr instead of substring
+		string = string.substring(0,limit-3) + dots;
+	}
+	return string;
+}

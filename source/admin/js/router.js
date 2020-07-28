@@ -23,7 +23,7 @@ a.router = (function(){
 							a.blog.listPage();
 						}
 						else if (parts[1] == 'edit') {
-							a.blog.editPage(parts[2]);
+							a.blog.edit.editPage(parts[2]);
 						}
 					}
 					else {

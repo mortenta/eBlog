@@ -4,6 +4,7 @@
 @import 'base';
 
 // Components
+@import 'components/blocklist';
 @import 'components/breadcrumb';
 @import 'components/btn';
 @import 'components/btngroup';
@@ -11,8 +12,11 @@
 @import 'components/formgroup';
 @import 'components/fsloader';
 @import 'components/grid';
+@import 'components/gridtable';
 @import 'components/growl';
+@import 'components/gsr';
 @import 'components/icards';
+@import 'components/itabbox';
 @import 'components/login';
 @import 'components/popup';
 @import 'components/table';

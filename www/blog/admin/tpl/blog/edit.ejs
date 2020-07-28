@@ -1,13 +1,18 @@
 <form name="edit_post" onsubmit="return false;" method="post">
+	<!--to prevent button actions on enter-->
+	<button style="display: none;"></button>
 	<div class="grid" style="margin: 2em 0 2em 0;">
 		<div class="row">
 			<div class="col col-6">
 				<ul class="breadcrumb" style="margin: .4em 0;">
-					<li><a href="#/">Blog post list</a></li>
-					<li><a href="#/blog/edit/<%=data.id%>/">Edit blog post</a></li>
+					<li><a href="#/">Article list</a></li>
+					<li><a href="#/blog/edit/<%=data.id%>/">Edit article</a></li>
 				</ul>
 			</div>
-			<div class="col col-6 right" style="">
+			<div class="col col-4 right" style="">
+				<button class="btn btn-outlined-blue" data-action="btn-none" onclick="a.blog.edit.gotoPost(<%=data.id%>);">Go to page &#x293B;</button>
+			</div>
+			<div class="col col-2 right" style="">
 				<span style="position: relative;top: 6px;margin-right: 5px;">Publish:</span>
 				<label class="cbswitch">
 					<input type="checkbox" name="published" value="1"<%=data.published==1?' checked':''%>>
@@ -17,74 +22,187 @@
 		</div>
 	</div>
 
-	<input type="hidden" name="id" value="<%=data.id%>">
-	<div class="grid space" style="margin: 1em 0 .5em 0;">
-		<div class="row">
-			<div class="col col-8">
-				<div class="form-group space">
-					<label>Heading</label>
-					<input type="text" name="title" value="<%=data.title%>">
-				</div>
-				<div class="form-group space">
-					<label>Summary</label>
-					<textarea name="summary" style="height:8em;"><%=data.summary%></textarea>
-				</div>
-				<div class="form-group space">
-					<label>Main picture</label>
-					<input type="text" name="img" value="<%=data.img%>" style="width:calc(100% - 75px);"> 
-					<button class="btn btn-select" style="float: right;" data-action="select-main-image">Select</button>
+	<div class="itabbox margin-top-md" data-area="itabbox-items">
+		<ul class="itabs">
+			<li class="active"><span>Content</span></li>
+			<li><span>Related</span></li>
+			<li><span>Notes</span></li>
+			<li><span>Options</span></li>
+		</ul>
+		<div class="itabcontent">
+			<div>
+				<input type="hidden" name="id" value="<%=data.id%>">
+				<div class="grid space" style="margin: 1em 0 .5em 0;">
+					<div class="row">
+						<div class="col col-6">
+							<div class="form-group space">
+								<label>Heading</label>
+								<input type="text" name="title" value="<%=data.title%>">
+								<small data-area="charcount-heading"></small>
+							</div>
+							<div class="form-group space">
+								<label>Summary</label>
+								<textarea name="summary" style="height:12em;"><%=data.summary%></textarea>
+							</div>
+							<div class="form-group space">
+								<label>Main picture</label>
+								<input type="text" name="img" value="<%=data.img%>" style="width:calc(100% - 75px);"> 
+								<button class="btn btn-select" style="float: right;" data-action="select-main-image">Select</button>
+							</div>
+						</div>
+						<div class="col col-6">
+							<div class="form-group space">
+								<label>Meta title</label>
+								<input type="text" name="meta_title" value="<%=data.meta_title%>">
+								<small data-area="charcount-title">Character count: <b>20</b> <i>(too short)</i></small>
+							</div>
+							<div class="form-group space">
+								<label>Meta description</label>
+								<textarea name="meta_description" style="height:90px;"><%=data.meta_description%></textarea>
+								<small data-area="charcount-meta-description"></small>
+							</div>
+							<div class="gsr">
+								<label>Search Result Preview</label>
+								<h2>The Title of your website</h2>
+								<p>The description of your website</p>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col col-12">
+							<div class="form-group space">
+								<label>Content</label>
+								<textarea name="content" class="tinymce"><%=data.content%></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="grid space" style="margin: 1em 0 .5em 0;">
+						<div class="row">
+							<div class="col col-6">
+								&nbsp;
+							</div>
+							<div class="col col-6 right">
+								<button class="btn btn-primary" data-action="save-content">Save content</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
-			<div class="col col-4">
-				<div class="form-group space">
-					<label>Meta title</label>
-					<input type="text" name="meta_title" value="<%=data.meta_title%>">
+			<div>
+				<div class="gridtable space" style="margin: 1em 0 .5em 0;">
+					<div class="row">
+						<div class="col col-5 bottom">
+							<div class="form-group" style="margin-bottom: 5px;">
+								<h2 style="color:#515760;font-weight:300;margin-bottom: 1em;">Find and pick:</h2>
+								<div class="search">
+									<input type="search" name="rel-q" placeholder="Search for articles...">
+									<button class="btn btn-transparent" data-action="search-rel">&#x1F50D;</button>
+								</div>
+							</div>
+						</div>
+						<div class="col col-2 top"></div>
+						<div class="col col-5 top">
+							<h2 style="color:#515760;font-weight:300;margin-bottom: 1em;">Related articles:</h2>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col col-5 top" data-area="related-search-result"></div>
+						<div class="col col-2 top center">
+							<span style="font-size:5em;color:#ddd;">&#x21e8;</span>
+						</div>
+						<div class="col col-5 top" data-area="relatedlist">
+							<ul class="blocklist">
+								<li>
+									<div class="icon">
+										<i>&#x2630;</i>
+									</div>
+									<div>
+										<span>Artikkelnavn</span>
+									</div>
+									<div>
+										<button class="btn btn-link-red">&#x1F5D1;</button>
+									</div>
+								</li>
+								<li>
+									<div class="icon">
+										<i>&#x2630;</i>
+									</div>
+									<div>
+										<span>Artikkelnavn</span>
+									</div>
+									<div>
+										<button class="btn btn-link-red">Remove</button>
+									</div>
+								</li>
+								<li>
+									<div class="icon">
+										<i>&#x2630;</i>
+									</div>
+									<div>
+										<span>Artikkelnavn</span>
+									</div>
+									<div>
+										<button class="btn btn-link-red">Remove</button>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
 				</div>
-				<div class="form-group space">
-					<label>Meta description</label>
-					<textarea name="meta_description" style="height:177px;"><%=data.meta_description%></textarea>
+			</div>
+			<div>
+				<div class="grid space" style="margin: 1em 0 .5em 0;">
+					<div class="row">
+						<div class="col col-12">
+							<div class="form-group space">
+								<label>Private notes and research</label>
+								<textarea name="notes" class="tinymce"><%=data.notes%></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+
+						<div class="grid space" style="margin: 1em 0 .5em 0;">
+							<div class="row">
+								<div class="col col-6">
+									&nbsp;
+								</div>
+								<div class="col col-6 right">
+									<button class="btn btn-primary" data-action="save-notes">Save notes</button>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<div>
+				<div class="grid space" style="margin: 1em 0 .5em 0;">
+					<div class="row">
+						<div class="col col-12">
+							<div class="form-group space">
+								<label>URL Path</label>
+								<input type="text" name="url_path" value="<%=data.url_path%>">
+								<small>&#9888; Changing the URL path will break search engine link if indexed. Change with caution.</small>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="grid space" style="margin: 1em 0 .5em 0;">
+					<div class="row">
+						<div class="col col-6">
+							<button class="btn btn-outlined-red" data-action="delete">Delete article</button>
+						</div>
+						<div class="col col-6 right">
+							<button class="btn btn-primary" data-action="save-options">Save changes</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col col-12">
-				<div class="form-group space">
-					<label>Content</label>
-					<textarea name="content" class="tinymce"><%=data.content%></textarea>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col col-8">
-				<div class="form-group space">
-					<label>URL Path</label>
-					<input type="text" name="url_path" value="<%=data.url_path%>">
-					<small>&#9888; Changing the URL path will break search engine link if indexed. Change with caution.</small>
-				</div>
-			</div>
-			<div class="col col-1">&nbsp;</div>
-			<div class="col col-3">
-				<div class="form-group space">
-					<label>&nbsp;</label>
-					<label><span style="display: inline-block;width: 25px;">&#x1F517;</span><a onclick="a.blog.gotoPost(<%=data.id%>);">Go to blog post</a></label>
-				</div>
-			</div>
-		</div>
-	</div>
+	</div>		
 </form>
-
-<div class="vspace"></div>
-
-<div class="grid space" style="margin: 1em 0 .5em 0;">
-	<div class="row">
-		<div class="col col-6">
-			<button class="btn btn-outlined-red" data-action="delete">Delete</button>
-		</div>
-		<div class="col col-6 right">
-			<button class="btn btn-primary" data-action="save">Save changes</button>
-		</div>
-	</div>
-</div>
 
 <div class="grid" style="margin: 2em 0;background-color: #6c757d;padding:.5em;color:#fff;border-radius: 5px;">
 	<div class="row">

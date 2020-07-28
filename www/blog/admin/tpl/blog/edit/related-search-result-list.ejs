@@ -1,0 +1,20 @@
+<% if (list && list.length>0) { %>
+<ul class="blocklist">
+	<% list.forEach(function(e){ %>
+	<li>
+		<div>
+			<span><a onclick="a.blog.edit.gotoPost(<%=e.id%>);"><b><%=e.title%></b> <span>&#x293B;</span></a></span>
+		</div>
+		<div>
+			<button class="btn btn-link-blue" data-action="add-related" data-id="<%=e.id%>" data-title="<%=e.title%>">Add</button>
+		</div>
+	</li>
+	<% }); %>
+</ul>
+<% } else { %>
+
+<div class="emptymsg">
+	No articles found
+</div>
+
+<% } %>

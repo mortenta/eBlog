@@ -26,6 +26,7 @@
 	input[type="date"],
 	input[type="time"],
 	input[type="phone"],
+	input[type="search"],
 	textarea {
 		width: 100%;
 		padding: 5px 5px 6px 5px;
@@ -45,6 +46,7 @@
 	input[type="date"]:focus,
 	input[type="time"]:focus,
 	input[type="phone"]:focus,
+	input[type="search"]:focus,
 	textarea:focus {
 		outline: none;
 		border-color: #9ecaed;
@@ -171,6 +173,36 @@
 				}
 			}
 		}
+	}
+	.search {
+		width: 100%;
+		background-color: #fff;
+		box-sizing: border-box;
+		border: 1px solid #dadada;
+		border-radius: 3px;
+		input[type="search"] {
+			float: left;
+			width: calc(100% - 100px);
+			padding: 10px;
+			font-size: 1.2em;
+			border: none;
+		}
+		input[type="search"]:focus {
+			outline: none;
+			border-color: none;
+			box-shadow: none;
+		}
+		button {
+			font-size: 1.5em;
+			position: relative;
+			float: right;
+			top: 2px;
+		}
+	}
+	.search:after {
+		content: "";
+		display: table;
+		clear: both;
 	}
 	.help {
 		font-size: 0.8em;

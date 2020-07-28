@@ -1,0 +1,25 @@
+.gsr {
+	background-color: #fff;
+	padding: 10px;
+	box-sizing: border-box;
+	border:1px solid #ddd;
+	font-family: arial;
+	>label {
+		position: relative;
+		top: -5px;
+		color: #444950ba;
+		font-style: italic;
+	}
+	>h2 {
+		font-size: 17px;
+		line-height: 1.3em;
+		color: #1a0dab;
+		font-weight: 100;
+		margin-bottom: 5px;
+	}
+	>p {
+		font-size: 14px;
+		color:#4d5156;
+		line-height: 1.5em;
+	}
+}

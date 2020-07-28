@@ -14,10 +14,15 @@ class blog_admin {
 	private $Summary;
 	private $Content;
 	private $Img;
+	private $Notes;
 	private $Published;
 	private $URLPath;
 	private $Filename;
 	private $Display;
+	private $Limit;
+	private $SkipID;
+	private $Query;
+	private $Offset = 0;
 
 	function __construct () {
 		chdir(dirname(__FILE__));
@@ -92,6 +97,11 @@ class blog_admin {
 		return TRUE;
 	}
 
+	public function setNotes ($string) {
+		$this->Notes = $string;
+		return TRUE;
+	}
+
 	// List filters
 
 	public function setDisplay ($string) {
@@ -102,6 +112,46 @@ class blog_admin {
 			$this->Display = 'all';
 		}
 		return TRUE;
+	}
+
+	public function setLimit ($int) {
+		if (is_numeric($int)) {
+			$this->Limit = $int;
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function setOffset ($int) {
+		if (is_numeric($int)) {
+			$this->Offset = $int;
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function setQuery ($str) {
+		if (is_string($str) && strlen($str)>2 && strlen($str)<255) {
+			$this->Query = $str;
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function setSkipID ($id) {
+		if (is_numeric($id)) {
+			$this->SkipID = $id;
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
 	}
 
 	/**
@@ -149,8 +199,24 @@ class blog_admin {
 		else {
 			$QueryString .= "(published=1 OR published=0) ";
 		}
-		$QueryString .= "ORDER BY time_updated DESC";
+		if (is_numeric($this->SkipID)) {
+			$QueryString .= "AND id!=:skipid ";
+		}
+		if (is_string($this->Query)) {
+			$QueryString .= "AND MATCH(`title`,`summary`,`meta_title`,`meta_description`,`content`) ";
+			$QueryString .= "AGAINST(:query IN NATURAL LANGUAGE MODE) ";
+		}
+		$QueryString .= "ORDER BY time_updated DESC ";
+		if (is_numeric($this->Limit)) {
+			$QueryString .= "LIMIT ".$this->Offset.",".$this->Limit;
+		}
 		$q = $this->DBObj->prepare($QueryString);
+		if (is_numeric($this->SkipID)) {
+			$q->bindParam(":skipid",$this->SkipID);
+		}
+		if (is_string($this->Query)) {
+			$q->bindParam(":query",$this->Query);
+		}
 		$q->execute();
 		foreach ($q->fetchAll(PDO::FETCH_ASSOC) AS $Row) {
 			$PostList[] = $Row;
@@ -191,9 +257,9 @@ class blog_admin {
 		}
 	}
 
-	public function updatePost () {
+	public function updateArticleContent () {
 		if (is_numeric($this->PostID) && strlen($this->Title) > 3) {
-			// If first time publish, update publish date
+			/*// If first time publish, update publish date
 			if ($this->Published) {
 				$QueryString = "SELECT ";
 				$QueryString .= "time_published ";
@@ -210,7 +276,7 @@ class blog_admin {
 						$DontUpdatePublishTime = TRUE;
 					}
 				}
-			}
+			}*/
 			// Update post
 			$QueryString = "UPDATE ";
 			$QueryString .= "blog_posts ";
@@ -221,9 +287,6 @@ class blog_admin {
 			$QueryString .= "img=:img, ";
 			$QueryString .= "meta_title=:meta_title, ";
 			$QueryString .= "meta_description=:meta_description, ";
-			if (is_string($URLPath = $this->createUniqueURLPath($this->URLPath,$this->PostID))) {
-				$QueryString .= "url_path=:url_path, ";
-			}
 			$QueryString .= "published=:published, ";
 			if (!$DontUpdatePublishTime && $this->Published) {
 				$QueryString .= "time_published=:currentdatetime, ";
@@ -239,9 +302,6 @@ class blog_admin {
 			$q->bindParam(":img",$this->Img);
 			$q->bindParam(":meta_title",$this->MetaTitle);
 			$q->bindParam(":meta_description",$this->MetaDescription);
-			if (is_string($URLPath)) {
-				$q->bindParam(":url_path",$URLPath);
-			}
 			$q->bindParam(":currentdatetime",$this->CurrDateTime);
 			if ($this->Published) {
 				$Published = 1;
@@ -250,6 +310,64 @@ class blog_admin {
 				$Published = 0;
 			}
 			$q->bindParam(":published",$Published);
+			$q->bindParam(":bid",$this->PostID);
+			if ($q->execute()) {
+				return TRUE;
+			}
+			else {
+				return FALSE;
+			}
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function updateArticleNotes () {
+		if (is_numeric($this->PostID)) {
+			// Update post
+			$QueryString = "UPDATE ";
+			$QueryString .= "blog_posts ";
+			$QueryString .= "SET ";
+			$QueryString .= "notes=:notes, ";
+			$QueryString .= "time_updated=:currentdatetime ";
+			$QueryString .= "WHERE ";
+			$QueryString .= "id=:bid ";
+			$QueryString .= "LIMIT 1";
+			$q = $this->DBObj->prepare($QueryString);
+			$q->bindParam(":notes",$this->Notes);
+			$q->bindParam(":currentdatetime",$this->CurrDateTime);
+			$q->bindParam(":bid",$this->PostID);
+			if ($q->execute()) {
+				return TRUE;
+			}
+			else {
+				return FALSE;
+			}
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function updateArticleOptions () {
+		if (is_numeric($this->PostID)) {
+			// Update post
+			$QueryString = "UPDATE ";
+			$QueryString .= "blog_posts ";
+			$QueryString .= "SET ";
+			if (is_string($URLPath = $this->createUniqueURLPath($this->URLPath,$this->PostID))) {
+				$QueryString .= "url_path=:url_path, ";
+			}
+			$QueryString .= "time_updated=:currentdatetime ";
+			$QueryString .= "WHERE ";
+			$QueryString .= "id=:bid ";
+			$QueryString .= "LIMIT 1";
+			$q = $this->DBObj->prepare($QueryString);
+			if (is_string($URLPath)) {
+				$q->bindParam(":url_path",$URLPath);
+			}
+			$q->bindParam(":currentdatetime",$this->CurrDateTime);
 			$q->bindParam(":bid",$this->PostID);
 			if ($q->execute()) {
 				return TRUE;
@@ -493,6 +611,128 @@ class blog_admin {
 		}
 		else {
 			$this->ErrorMsg = 'Missing file or postID';
+			return FALSE;
+		}
+	}
+
+	public function listRelatedPosts () {
+		if (is_numeric($this->PostID)) {
+			$OA = array();
+			$QueryString = "SELECT ";
+			$QueryString .= "blog_post_relations.relpostid as id, ";
+			$QueryString .= "blog_posts.title ";
+			$QueryString .= "";
+			$QueryString .= "FROM ";
+			$QueryString .= "blog_post_relations ";
+			$QueryString .= "LEFT JOIN blog_posts ON blog_posts.id=blog_post_relations.relpostid ";
+			$QueryString .= "WHERE ";
+			$QueryString .= "blog_post_relations.postid=:id ";
+			$QueryString .= "ORDER BY `order`";
+			$q = $this->DBObj->prepare($QueryString);
+			$q->bindParam(":id",$this->PostID);
+			$q->execute();
+			foreach ($q->fetchAll(PDO::FETCH_ASSOC) AS $Row) {
+				$OA[] = $Row;
+			}
+			return $OA;
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function addRelatedPost ($RelPostID) {
+		if (is_numeric($this->PostID) && is_numeric($RelPostID)) {
+			if ($this->PostID !== $RelPostID) {
+				$QueryString = "INSERT INTO ";
+				$QueryString .= "blog_post_relations (postid,relpostid) ";
+				$QueryString .= "SELECT * FROM (SELECT :postid,:relpostid) AS tmp ";
+				$QueryString .= "WHERE NOT EXISTS (";
+				$QueryString .= "SELECT id FROM blog_post_relations WHERE postid=:postid AND relpostid=:relpostid";
+				$QueryString .= ") LIMIT 1;";
+				$q = $this->DBObj->prepare($QueryString);
+				$q->bindParam(":postid",$this->PostID);
+				$q->bindParam(":relpostid",$RelPostID);
+				if ($q->execute()) {
+					return TRUE;
+				}
+				else {
+					return FALSE;
+				}
+			}
+			else {
+				// Trying to add itself as related
+				return TRUE;
+			}
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function deleteRelatedPost ($RelPostID) {
+		if (is_numeric($this->PostID) && is_numeric($RelPostID)) {
+			if ($this->PostID !== $RelPostID) {
+				$QueryString = "DELETE FROM ";
+				$QueryString .= "blog_post_relations ";
+				$QueryString .= "WHERE postid=:postid AND relpostid=:relpostid ";
+				$QueryString .= "LIMIT 1;";
+				$q = $this->DBObj->prepare($QueryString);
+				$q->bindParam(":postid",$this->PostID);
+				$q->bindParam(":relpostid",$RelPostID);
+				if ($q->execute()) {
+					return TRUE;
+				}
+				else {
+					print_r($q->errorInfo());
+					return FALSE;
+				}
+			}
+			else {
+				// Trying to add itself as related
+				return TRUE;
+			}
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function orderRelatedPosts ($order) {
+		$Error = FALSE;
+		if (is_numeric($this->PostID) && is_string($order)) {
+			if (is_array($RelIDArray = explode(",",$order))) {
+				foreach ($RelIDArray as $Order => $RelID) {
+					if (is_numeric($RelID) && is_numeric($Order)) {
+						$QueryString = "UPDATE ";
+						$QueryString .= "blog_post_relations ";
+						$QueryString .= "SET ";
+						$QueryString .= "`order`=:order ";
+						$QueryString .= "WHERE ";
+						$QueryString .= "postid=:postid AND ";
+						$QueryString .= "relpostid=:relpostid ";
+						$QueryString .= "LIMIT 1";
+						$q = $this->DBObj->prepare($QueryString);
+						$q->bindParam(":postid",$this->PostID);
+						$q->bindParam(":order",$Order);
+						$q->bindParam(":relpostid",$RelID);
+						if (!$q->execute()) {
+							$Error = TRUE;
+						}
+					}
+				}
+				if (!$Error) {
+					return TRUE;
+				}
+				else {
+					return FALSE;
+				}
+			}
+			else {
+				return FALSE;
+			}
+		}
+		else {
 			return FALSE;
 		}
 	}

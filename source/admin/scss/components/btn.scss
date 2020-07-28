@@ -16,10 +16,37 @@
 	}
 }
 
+.btn.btn-transparent {
+	background-color: transparent;
+	border:none;
+}
+
 .btn.btn-outlined-red {
 	background-color: transparent;
 	border: 1px solid red;
 	color: red;
+}
+
+.btn.btn-outlined-blue {
+	background-color: transparent;
+	border: 1px solid #0092DC;
+	color: #0092DC;
+}
+
+.btn.btn-link-red {
+	background-color: transparent;
+	border: none;
+	color: red;
+}
+
+.btn.btn-link-blue {
+	background-color: transparent;
+	border: none;
+	color: #0092DC;
+}
+
+.btn.btn-sm {
+	padding: 2px 5px 1px 5px;
 }
 
 .btn.btn-primary,
