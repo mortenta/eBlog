@@ -112,7 +112,6 @@ foreach ($BWLObj->getListIndex() as $i) {
 
 	// Time updated
 	print $BWLObj->getTimeUpdated($i);
-
 }
 ```
 
@@ -129,48 +128,46 @@ Load the article:
 ```php
 if (is_object($BWAObj) && $BWAObj->setURLPath($_REQUEST['url_path']) && $BWAObj->loadArticle() && $BWAObj->loadRelated()) {
 	// Article content goes here
+
+	// Functions to fetch content from the article:
+
+	// Meta title
+	print $BWAObj->getMetaTitle();
+
+	// Meta description
+	print $BWAObj->getMetaDescription();
+
+	// Title / heading
+	print $BWAObj->getTitle();
+
+	// Summary
+	print $BWAObj->getSummary();
+
+	// Content
+	print $BWAObj->getContent();
+
+	// Loop through related articles:
+
+	foreach ($BWAObj->getRelatedIndex() as $i) {
+		// Each related article record goes here
+
+		// Related article path
+		print $BWAObj->getRelPath($i);
+		// Remember to puth the leading path in front, e.g.:
+		<a href="/blog/post/<?php print $BWAObj->getRelPath($i); ?>/">Read more</a>
+
+		// Related article title
+		print $BWAObj->getRelTitle($i);
+
+		// Related article summary
+		print $BWAObj->getRelSummary($i);
+	}
+
 }
 else {
 	// Invalid path, 404 goes here
 	http_response_code(404);
 	print "404 Not found";
 	exit;
-}
-```
-
-Functions to fetch content from the article:
-```php
-// Meta title
-print $BWAObj->getMetaTitle();
-
-// Meta description
-print $BWAObj->getMetaDescription();
-
-// Title / heading
-print $BWAObj->getTitle();
-
-// Summary
-print $BWAObj->getSummary();
-
-// Content
-print $BWAObj->getContent();
-```
-
-Loop through related articles:
-```php
-foreach ($BWAObj->getRelatedIndex() as $i) {
-	// Each related article record goes here
-
-	// Related article path
-	print $BWAObj->getRelPath($i);
-	// Remember to puth the leading path in front, e.g.:
-	<a href="/blog/post/<?php print $BWAObj->getRelPath($i); ?>/">Read more</a>
-
-	// Related article title
-	print $BWAObj->getRelTitle($i);
-
-	// Related article summary
-	print $BWAObj->getRelSummary($i);
-
 }
 ```
