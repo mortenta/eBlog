@@ -1,16 +1,25 @@
 EmbedBlog is a LAMP based blog module that can be embedded in a static PHP site. It is based on the blog codebase used on www.diyrenewable.com
 
+## Admin interface
+
 ![Article listing](./readme_img/listing.png)
+List articles; display all, published or unpublished.
 
 ![eBlog editor](./readme_img/edit.png)
+The article editor. The blog post content is separated from the meta information, so you can improve your SERP listing. Character counters to help creating ideal title and description length, and search result preview of the article.
 
 ![Select image](./readme_img/select_image.png)
+Batch upload and select images. Only the images for the current article is shown, so you don't end up with chaos.
 
 ![Related articles](./readme_img/article_related.png)
+Ability to search and add related articles
 
 ![Article notes](./readme_img/article_notes.png)
+Make notes and do research before you write the actual article.
 
 ![Article options](./readme_img/article_options.png)
+Ability to change the URL path of the blog post.
+
 
 ## Features
 * Dynamic, lightweight AJAX based admin interface
@@ -21,6 +30,9 @@ EmbedBlog is a LAMP based blog module that can be embedded in a static PHP site.
 * Image picker shows only the current blog post images
 * Publish and unpublish articles
 * Per blog post URL path customization
+* SERP and SEO improvement tools
+* Related articles
+* Take notes for each article
 * SCSS and JS source code included
 
 ### Requirements
