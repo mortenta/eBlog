@@ -48,4 +48,70 @@ If you want to upgrade to a new version of the eBlog system, there are a few bes
 	* /www/blog/logic/
 * In some cases, the database structure, config.php and .htaccess has been updated as well. Compare your current config.php and .htaccess file with the new. There are several ways to compare the database structure, but if you're familiar with MySQL queries and dump files, you can make a dump (structure only) of your current database, and compare it with the new database.sql file. https://www.diffchecker.com/ can be a useful tool to compare any changes to the database.
 
+## List and display blog posts
 
+There are two main views: list articles and display article. There are two example files in /www/blog/:
+* index.php : This is the blog post listing
+* blogpost.php : This is the blog post template
+
+You may use .htaccess (for Apache web servers) file to rewrite and "prettify" the blog post URL (or configure it otherwise if using nginx or other web servers), but it's also possible to just run it directly on blogpost.php like this:
+* blogpost.php?url_path=urlpath
+
+### Article listing
+
+Initiate the blog:
+
+```php
+require_once('./logic/classes/blogviewer_list.class.php');
+$BWLObj = new blogviewer_list;
+```
+
+Options:
+```php
+// The time and date format, https://www.php.net/manual/en/datetime.formats.date.php
+// Default value: Y-m-d
+$BWLObj->setDateFormat('Y-m-d');
+
+// Full URL to a default picture if to chosen in article
+// Default value: https://via.placeholder.com/200x150
+$BWLObj->setDefaultImage('https://picsum.photos/200/150');
+
+// The URL path where all the pictures (thumbnails) are located.
+// Default value: //<yourdomain>/blog/img/tn/
+$BWLObj->setLeadingImgPath('https://<yourdomain>/blog/img/tn/');
+```
+
+Then, load the list of articles:
+```php
+$BWLObj->listArticles();
+```
+
+To loop through, and display the articles:
+```php
+foreach ($BWLObj->getListIndex() as $i) {
+	// Each article template goes here
+}
+```
+
+You can use the following functions to fetch content from the article:
+```php
+// Get image (file name)
+print $BWLObj->getImage($i);
+
+// Get the article path
+// Remember to puth the leading path in front, e.g.:
+// <a href="/blog/post/<?php print $BWLObj->getPath($i); ?>/">Read more</a>
+print $BWLObj->getPath($i);
+
+// Title
+print $BWLObj->getTitle($i);
+
+// Summary
+print $BWLObj->getSummary($i);
+
+// Time created
+print $BWLObj->getTimeCreated($i);
+
+// Time updated
+print $BWLObj->getTimeUpdated($i);
+```
