@@ -34,6 +34,11 @@ class blogviewer_list {
 		return TRUE;
 	}
 
+	public function setLeadingImgPath ($string) {
+		$this->LeadingImgPath = $string;
+		return TRUE;
+	}
+
 	/**
 	* Getters
 	*/
