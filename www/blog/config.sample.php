@@ -8,10 +8,4 @@ $DBSettings['username'] = 'embedblog'; // Database username
 $DBSettings['password'] = 'password'; // Password to the database
 // Site
 $SiteSettings['name'] = 'eBlog'; // Unicode icons is your logo? Find at https://unicode-table.com/en/
-$SiteSettings['default_meta_title'] = 'Your Blog Name'; // The title of the main page
-$SiteSettings['default_meta_description'] = 'Description of the site'; // The description of the main page
 $SiteSettings['siteurl'] = 'https://www.yoursite.com'; // Website URL without trailing slash
-$SiteSettings['sharethis_property_id'] = ''; // Register at sharethis.com, and insert property ID here for share buttons
-$SiteSettings['ga_ua_id'] = ''; // Google Analytics UA id (UA-xxxxxxx-1)
-
-$SiteSettings['date_in_url'] = FALSE; // Use date in URL or not
