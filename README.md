@@ -59,7 +59,7 @@ You may use .htaccess (for Apache web servers) file to rewrite and "prettify" th
 
 ### Article listing
 
-Initiate the blog:
+Initiate the blog listing:
 
 ```php
 require_once('./logic/classes/blogviewer_list.class.php');
@@ -90,28 +90,87 @@ To loop through, and display the articles:
 ```php
 foreach ($BWLObj->getListIndex() as $i) {
 	// Each article template goes here
+
+	// Functions to fetch content from each article:
+
+	// Get image (file name)
+	print $BWLObj->getImage($i);
+
+	// Get the article path
+	// Remember to puth the leading path in front, e.g.:
+	// <a href="/blog/post/<?php print $BWLObj->getPath($i); ?>/">Read more</a>
+	print $BWLObj->getPath($i);
+
+	// Title
+	print $BWLObj->getTitle($i);
+
+	// Summary
+	print $BWLObj->getSummary($i);
+
+	// Time created
+	print $BWLObj->getTimeCreated($i);
+
+	// Time updated
+	print $BWLObj->getTimeUpdated($i);
+
 }
 ```
 
-You can use the following functions to fetch content from the article:
+## Display article
+
+Initiate the blog article:
+
 ```php
-// Get image (file name)
-print $BWLObj->getImage($i);
+require_once('./logic/classes/blogviewer_article.class.php');
+$BWAObj = new blogviewer_article;
+```
 
-// Get the article path
-// Remember to puth the leading path in front, e.g.:
-// <a href="/blog/post/<?php print $BWLObj->getPath($i); ?>/">Read more</a>
-print $BWLObj->getPath($i);
+Load the article:
+```php
+if (is_object($BWAObj) && $BWAObj->setURLPath($_REQUEST['url_path']) && $BWAObj->loadArticle() && $BWAObj->loadRelated()) {
+	// Article content goes here
+}
+else {
+	// Invalid path, 404 goes here
+	http_response_code(404);
+	print "404 Not found";
+	exit;
+}
+```
 
-// Title
-print $BWLObj->getTitle($i);
+Functions to fetch content from the article:
+```php
+// Meta title
+print $BWAObj->getMetaTitle();
+
+// Meta description
+print $BWAObj->getMetaDescription();
+
+// Title / heading
+print $BWAObj->getTitle();
 
 // Summary
-print $BWLObj->getSummary($i);
+print $BWAObj->getSummary();
 
-// Time created
-print $BWLObj->getTimeCreated($i);
+// Content
+print $BWAObj->getContent();
+```
 
-// Time updated
-print $BWLObj->getTimeUpdated($i);
+Loop through related articles:
+```php
+foreach ($BWAObj->getRelatedIndex() as $i) {
+	// Each related article record goes here
+
+	// Related article path
+	// Remember to puth the leading path in front, e.g.:
+	// <a href="/blog/post/<?php print $BWAObj->getRelPath($i); ?>/">Read more</a>
+	print $BWAObj->getRelPath($i);
+
+	// Related article title
+	print $BWAObj->getRelTitle($i);
+
+	// Related article summary
+	print $BWAObj->getRelSummary($i);
+
+}
 ```
