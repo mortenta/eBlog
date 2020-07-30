@@ -97,9 +97,9 @@ foreach ($BWLObj->getListIndex() as $i) {
 	print $BWLObj->getImage($i);
 
 	// Get the article path
-	// Remember to puth the leading path in front, e.g.:
-	// <a href="/blog/post/<?php print $BWLObj->getPath($i); ?>/">Read more</a>
 	print $BWLObj->getPath($i);
+	// Remember to puth the leading path in front, e.g.:
+	<a href="/blog/post/<?php print $BWLObj->getPath($i); ?>/">Read more</a>
 
 	// Title
 	print $BWLObj->getTitle($i);
@@ -162,9 +162,9 @@ foreach ($BWAObj->getRelatedIndex() as $i) {
 	// Each related article record goes here
 
 	// Related article path
-	// Remember to puth the leading path in front, e.g.:
-	// <a href="/blog/post/<?php print $BWAObj->getRelPath($i); ?>/">Read more</a>
 	print $BWAObj->getRelPath($i);
+	// Remember to puth the leading path in front, e.g.:
+	<a href="/blog/post/<?php print $BWAObj->getRelPath($i); ?>/">Read more</a>
 
 	// Related article title
 	print $BWAObj->getRelTitle($i);
