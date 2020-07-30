@@ -1,8 +1,16 @@
-EmbedBlog is a LAMP based blog module that can be embedded in a static PHP site. It is based on the blog codebase used on www.itefy.com/blog/
+EmbedBlog is a LAMP based blog module that can be embedded in a static PHP site. It is based on the blog codebase used on www.diyrenewable.com
+
+![Article listing](./readme_img/listing.png)
 
 ![eBlog editor](./readme_img/edit.png)
 
 ![Select image](./readme_img/select_image.png)
+
+![Related articles](./readme_img/article_related.png)
+
+![Article notes](./readme_img/article_notes.png)
+
+![Article options](./readme_img/article_options.png)
 
 ## Features
 * Dynamic, lightweight AJAX based admin interface
