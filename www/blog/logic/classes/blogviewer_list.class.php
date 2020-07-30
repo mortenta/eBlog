@@ -1,9 +1,12 @@
 <?php
-class blog_viewer {
+class blogviewer_list {
 
 	private $DBObj;
-	private $URLPath;
-	private $SiteSettings;
+	private $ArticleList = array();
+
+	private $DateFormat = 'Y-m-d';
+	private $DefaultImage = 'https://via.placeholder.com/200x150';
+	private $LeadingImgPath;
 
 	function __construct () {
 		chdir(dirname(__FILE__));
@@ -13,7 +16,7 @@ class blog_viewer {
 		if ($BlogDBObj->connectDB() && is_object($BlogDBObj->getDBObj())) {
 			$this->DBObj = $BlogDBObj->getDBObj();
 		}
-		$this->SiteSettings = $SiteSettings;
+		$this->LeadingImgPath = '//'.$_SERVER['HTTP_HOST'].'/blog/img/tn/';
 	}
 
 
@@ -21,29 +24,95 @@ class blog_viewer {
 	* Setters
 	*/
 
-	public function setURLPath ($string) {
-		if (is_string($string) && strlen($string) <= 255) {
-			$this->URLPath = $this->toAscii($string);
-			return TRUE;
-		}
-		else {
-			return FALSE;
-		}
+	public function setDefaultImage ($string) {
+		$this->DefaultImage = $string;
+		return TRUE;
+	}
+
+	public function setDateFormat ($string) {
+		$this->DateFormat = $string;
+		return TRUE;
 	}
 
 	/**
 	* Getters
 	*/
 
-	public function getSiteSettings () {
-		return $this->SiteSettings;
+	public function getListIndex () {
+		if (is_array($this->ArticleList)) {
+			return array_keys($this->ArticleList);
+		}
+		else {
+			return array_keys(array());
+		}
 	}
+
+	public function getTitle ($i) {
+		if (is_numeric($i) && is_array($this->ArticleList[$i])) {
+			return $this->ArticleList[$i]['title'];
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function getPath ($i) {
+		if (is_numeric($i) && is_array($this->ArticleList[$i])) {
+			return $this->ArticleList[$i]['url_path'];
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function getSummary ($i) {
+		if (is_numeric($i) && is_array($this->ArticleList[$i])) {
+			return $this->ArticleList[$i]['summary'];
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function getTimeCreated ($i) {
+		if (is_numeric($i) && is_array($this->ArticleList[$i])) {
+			return date($this->DateFormat,strtotime($this->ArticleList[$i]['time_created']));
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function getTimeUpdated ($i) {
+		if (is_numeric($i) && is_array($this->ArticleList[$i])) {
+			return date($this->DateFormat,strtotime($this->ArticleList[$i]['time_updated']));
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function getImage ($i) {
+		if (is_numeric($i) && is_array($this->ArticleList[$i])) {
+			if (is_string($this->ArticleList[$i]['img']) && strlen($this->ArticleList[$i]['img'])>5) {
+				return $this->LeadingImgPath.$this->ArticleList[$i]['img'];
+			}
+			else {
+				return $this->DefaultImage;
+			}
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	
 
 	/**
 	* Public functions
 	*/
 
-	public function listPosts ($Limit=FALSE) {
+	public function listArticles ($Limit=FALSE) {
 		if (is_object($this->DBObj)) {
 			$QueryString = "SELECT ";
 			$QueryString .= "blog_posts.id, ";
@@ -114,42 +183,24 @@ class blog_viewer {
 			if (is_array($PostList)) {
 				foreach ($PostList as $Post) {
 					if (!is_array($OA[$Post['id']])) {
-						$OA[$Post['id']] = $Post;
-						$OA[$Post['id']]['taglist'] = $this->getTags($Post['tag_ids'],$TagArray);
+						$this->ArticleList[$Post['id']] = $Post;
+						$this->ArticleList[$Post['id']]['taglist'] = $this->getTags($Post['tag_ids'],$TagArray);
 					}
 				}
-				return $OA;
 			}
-			else {
-				return FALSE;
-			}
+			return TRUE;
 		}
 		else {
 			return FALSE;
 		}
 	}
 
-	public function loadPost () {
-		if (is_string($this->URLPath)) {
-			$QueryString = "SELECT ";
-			$QueryString .= "* ";
-			$QueryString .= "FROM ";
-			$QueryString .= "blog_posts ";
-			$QueryString .= "WHERE ";
-			$QueryString .= "url_path=:url_path ";
-			$QueryString .= "LIMIT 1";
-			$q = $this->DBObj->prepare($QueryString);
-			$q->bindParam(":url_path",$this->URLPath);
-			$q->execute();
-			if (is_array($Row = $q->fetch(PDO::FETCH_ASSOC))) {
-				return $Row;
-			}
-			else {
-				return FALSE;
-			}
+	public function returnImage ($Img,$Path,$Default) {
+		if (is_string($Img) && strlen($Img)>5) {
+			return $Path.$Img;
 		}
 		else {
-			return FALSE;
+			return $Default;
 		}
 	}
 
@@ -174,17 +225,6 @@ class blog_viewer {
 		else {
 			return FALSE;
 		}
-	}
-
-	private function toAscii ($str, $replace=array(), $delimiter='-') {
-		if( !empty($replace) ) {
-			$str = str_replace((array)$replace, ' ', $str);
-		}
-		$clean = mb_convert_encoding($str,'ASCII');
-		$clean = preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', $clean);
-		$clean = strtolower(trim($clean, '-'));
-		$clean = preg_replace("/[\/_|+ -]+/", $delimiter, $clean);
-		return $clean;
 	}
 
 }

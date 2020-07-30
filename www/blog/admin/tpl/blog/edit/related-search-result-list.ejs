@@ -2,6 +2,9 @@
 <ul class="blocklist">
 	<% list.forEach(function(e){ %>
 	<li>
+		<div class="icon">
+			<i style="color:<%=e.published==1?'#00bf00':'#ff0076'%>;">&#11044;</i>
+		</div>
 		<div>
 			<span><a onclick="a.blog.edit.gotoPost(<%=e.id%>);"><b><%=e.title%></b> <span>&#x293B;</span></a></span>
 		</div>

@@ -620,8 +620,8 @@ class blog_admin {
 			$OA = array();
 			$QueryString = "SELECT ";
 			$QueryString .= "blog_post_relations.relpostid as id, ";
-			$QueryString .= "blog_posts.title ";
-			$QueryString .= "";
+			$QueryString .= "blog_posts.title, ";
+			$QueryString .= "blog_posts.published ";
 			$QueryString .= "FROM ";
 			$QueryString .= "blog_post_relations ";
 			$QueryString .= "LEFT JOIN blog_posts ON blog_posts.id=blog_post_relations.relpostid ";

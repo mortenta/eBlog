@@ -1,67 +1,57 @@
 <?php
-require_once('./logic/classes/blog_viewer.class.php');
-$BlogViewerObj = new blog_viewer;
-if (is_object($BlogViewerObj)) {
-	$PostList = $BlogViewerObj->listPosts();
-}
-chdir(dirname(__FILE__));
-$SiteSettings = $BlogViewerObj->getSiteSettings();
-// Render site
-$title = $SiteSettings['default_meta_title'];
-$description = $SiteSettings['default_meta_description'];
-$type = 'article';
-$url_path = '/blog/post/'.date("Y-m-d",strtotime($PostArray['time_published'])).'/'.$PostArray['url_path'].'/';
-$image = '/blog/img/full/'.$PostArray['img'];
-if (is_string($SiteSettings['sharethis_property_id']) && strlen($SiteSettings['sharethis_property_id'])>1) {
-	$head .= "\t\t".'<script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property='.$SiteSettings['sharethis_property_id'].'&product=inline-share-buttons"></script>'."\n";
-}
-if (is_string($SiteSettings['ga_ua_id']) && strlen($SiteSettings['ga_ua_id'])>1) {
-	$head .= "\t\t".'<!-- Global site tag (gtag.js) - Google Analytics -->'."\n";
-	$head .= "\t\t".'<script async src="https://www.googletagmanager.com/gtag/js?id='.$SiteSettings['ga_ua_id'].'"></script>'."\n";
-	$head .= "\t\t".'<script>'."\n";
-	$head .= "\t\t\t".'window.dataLayer = window.dataLayer || [];'."\n";
-	$head .= "\t\t\t".'function gtag(){dataLayer.push(arguments);}'."\n";
-	$head .= "\t\t\t".'gtag(\'js\', new Date());'."\n";
-	$head .= "\t\t\t".'gtag(\'config\', \''.$SiteSettings['ga_ua_id'].'\');'."\n";
-	$head .= "\t\t".'</script>'."\n";
-}
-include('./inc/head.php');
+require_once('./logic/classes/blogviewer_list.class.php');
+$BWLObj = new blogviewer_list;
+if (is_object($BWLObj)) {
+	$BWLObj->setDateFormat('Y-m-d');
+	$BWLObj->setDefaultImage('https://picsum.photos/200/150');
+	if ($BWLObj->listArticles()) {
 ?>
-
-<div class="mainc light" style="margin-top: 30px;">
-	<div class="mainc_inner vpad-3x">
-		<div class="icontainer break-md">
-			<ul class="bloglist">
-				<?php
-					if (is_array($PostList)) {
-						foreach ($PostList as $Post) {
-				?>
-				<li>
-					<div class="picture" style="background: url('/blog/img/tn/<?php print $Post['img']; ?>') no-repeat center center;background-size: cover;" onclick="location.href='/blog/post/<?php print $Post['url_path'].'/'; ?>'">
-						<div class="date">
-							<div class="m"><?php print date("M",strtotime($Post['time_published'])); ?></div>
-							<div class="d"><?php print date("j",strtotime($Post['time_published'])); ?></div>
-							<div class="y"><?php print date("Y",strtotime($Post['time_published'])); ?></div>
-						</div>
-					</div>
-					<div class="content">
-						<h2><a href="/blog/post/<?php print $Post['url_path'].'/'; ?>"><?php print $Post['title']; ?></a></h2>
-						<div class="summary"><?php print $Post['summary']; ?></div>
-						<?php if (is_array($Post['taglist'])) { ?>
-						<ul class="taglist">
-							<?php foreach ($Post['taglist'] as $Tag) { ?>
-								<li><a href="/blog/archive/?c=<?php print $Tag['path']; ?>"><?php print $Tag['title']; ?></a></li>
-							<?php } ?>
-						</ul>
-						<?php } ?>
-					</div>
-				</li>
-				<?php } } ?>
-			</ul>
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>eBlog</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css">
+	<style>
+		a {
+			color:#2196F3;
+			text-decoration: none;
+		}
+		h2 {
+			margin: 0;
+			font-weight: 100;
+		}
+	</style>
+</head>
+<body style="background-color: #f6f7f9;">
+	
+	<div style="background-color:#363e49;">
+		<div style="color:#fff;padding: 8px 0;width: 100%;max-width: 900px;margin: 0 auto;">
+			eBlog
 		</div>
 	</div>
-</div>
+	<div style="width: 100%;max-width: 900px;margin: 1em auto;">
+		<?php
+			foreach ($BWLObj->getListIndex() as $i) {
+		?>
+		<div class="pure-g" style="margin: 3em 0;">
+			<div class="pure-u-1-5"><img src="<?php print $BWLObj->getImage($i);?>" style="width: 150px;" alt=""/></div>
+			<div class="pure-u-4-5">
+				<a href="/blog/post/<?php print $BWLObj->getPath($i);?>/"><h2><?php print $BWLObj->getTitle($i); ?></h2></a>
+				<p><?php print $BWLObj->getSummary($i);?></p>
+				<small>Created: <?php print $BWLObj->getTimeCreated($i);?> | Updated: <?php print $BWLObj->getTimeUpdated($i);?></small>
+			</div>
+		</div>
+		<?php
+			}
+		?>
+	</div>
 
+</body>
+</html>
 <?php
-include('./inc/foot.php');
+	}
+}
 ?>

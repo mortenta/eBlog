@@ -3,7 +3,7 @@
 	<% list.forEach(function(e){ %>
 	<li data-id="<%=e.id%>">
 		<div class="icon">
-			<i>&#x2630;</i>
+			<i style="color:<%=e.published==1?'#00bf00':'#ff0076'%>;">&#x2630;</i>
 		</div>
 		<div>
 			<span><a onclick="a.blog.edit.gotoPost(<%=e.id%>);"><b><%=e.title%></b> <span>&#x293B;</span></a></span>
