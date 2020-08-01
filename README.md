@@ -113,7 +113,7 @@ foreach ($BWLObj->getListIndex() as $i) {
 
 	// Functions to fetch content from each article:
 
-	// Get image (file name)
+	// Get image (full path)
 	print $BWLObj->getImage($i);
 
 	// Get the article path
@@ -151,6 +151,14 @@ Options:
 // The time and date format, https://www.php.net/manual/en/datetime.formats.date.php
 // Default value: Y-m-d
 $BWAObj->setDateFormat('Y-m-d');
+
+// Full URL to a default picture if to chosen in article
+// Default value: https://via.placeholder.com/200x150
+$BWAObj->setDefaultImage('https://picsum.photos/200/150');
+
+// The URL path where all the pictures (thumbnails) are located.
+// Default value: //<yourdomain>/blog/img/tn/
+$BWAObj->setLeadingImgPath('https://<yourdomain>/blog/img/tn/');
 ```
 
 Load the article:
@@ -198,6 +206,9 @@ if (is_object($BWAObj) && $BWAObj->setURLPath($_REQUEST['url_path']) && $BWAObj-
 
 		// Related article summary
 		print $BWAObj->getRelSummary($i);
+
+		// Get image (full path)
+		print $BWAObj->getRelImage($i);
 	}
 
 }

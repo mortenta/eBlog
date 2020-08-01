@@ -5,8 +5,11 @@ class blogviewer_article {
 	private $URLPath;
 
 	private $PostArray;
-	private $DateFormat = 'Y-m-d';
 	private $RelatedList = array();
+
+	private $DateFormat = 'Y-m-d';
+	private $DefaultImage = 'https://via.placeholder.com/200x150';
+	private $LeadingImgPath;
 
 	function __construct () {
 		chdir(dirname(__FILE__));
@@ -16,6 +19,7 @@ class blogviewer_article {
 		if ($BlogDBObj->connectDB() && is_object($BlogDBObj->getDBObj())) {
 			$this->DBObj = $BlogDBObj->getDBObj();
 		}
+		$this->LeadingImgPath = '//'.$_SERVER['HTTP_HOST'].'/blog/img/tn/';
 	}
 
 
@@ -35,6 +39,16 @@ class blogviewer_article {
 
 	public function setDateFormat ($string) {
 		$this->DateFormat = $string;
+		return TRUE;
+	}
+
+	public function setDefaultImage ($string) {
+		$this->DefaultImage = $string;
+		return TRUE;
+	}
+
+	public function setLeadingImgPath ($string) {
+		$this->LeadingImgPath = $string;
 		return TRUE;
 	}
 
@@ -145,6 +159,21 @@ class blogviewer_article {
 		else {
 			return FALSE;
 		}
+	}
+
+	public function getRelImage ($i) {
+		if (is_numeric($i) && is_array($this->RelatedList[$i])) {
+			if (is_string($this->RelatedList[$i]['img']) && strlen($this->RelatedList[$i]['img'])>5) {
+				return $this->LeadingImgPath.$this->RelatedList[$i]['img'];
+			}
+			else {
+				return $this->DefaultImage;
+			}
+		}
+		else {
+			return FALSE;
+		}
+
 	}
 
 	/**
