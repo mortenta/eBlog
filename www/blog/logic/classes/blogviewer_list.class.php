@@ -79,18 +79,24 @@ class blogviewer_list {
 		}
 	}
 
-	public function getTimeCreated ($i) {
+	public function getTimeCreated ($i,$format=FALSE) {
 		if (is_numeric($i) && is_array($this->ArticleList[$i])) {
-			return date($this->DateFormat,strtotime($this->ArticleList[$i]['time_created']));
+			if (!is_string($format)) {
+				$format = $this->DateFormat;
+			}
+			return date($format,strtotime($this->ArticleList[$i]['time_created']));
 		}
 		else {
 			return FALSE;
 		}
 	}
 
-	public function getTimeUpdated ($i) {
+	public function getTimeUpdated ($i,$format=FALSE) {
 		if (is_numeric($i) && is_array($this->ArticleList[$i])) {
-			return date($this->DateFormat,strtotime($this->ArticleList[$i]['time_updated']));
+			if (!is_string($format)) {
+				$format = $this->DateFormat;
+			}
+			return date($format,strtotime($this->ArticleList[$i]['time_updated']));
 		}
 		else {
 			return FALSE;

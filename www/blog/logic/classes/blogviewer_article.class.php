@@ -87,18 +87,24 @@ class blogviewer_article {
 		}
 	}
 
-	public function getTimeCreated ($i) {
+	public function getTimeCreated ($format=FALSE) {
 		if (is_array($this->PostArray)) {
-			return date($this->DateFormat,strtotime($this->PostArray['time_created']));
+			if (!is_string($format)) {
+				$format = $this->DateFormat;
+			}
+			return date($format,strtotime($this->PostArray['time_created']));
 		}
 		else {
 			return FALSE;
 		}
 	}
 
-	public function getTimeUpdated ($i) {
+	public function getTimeUpdated ($format=FALSE) {
 		if (is_array($this->PostArray)) {
-			return date($this->DateFormat,strtotime($this->PostArray['time_updated']));
+			if (!is_string($format)) {
+				$format = $this->DateFormat;
+			}
+			return date($format,strtotime($this->PostArray['time_updated']));
 		}
 		else {
 			return FALSE;

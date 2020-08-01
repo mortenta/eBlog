@@ -128,10 +128,12 @@ foreach ($BWLObj->getListIndex() as $i) {
 	print $BWLObj->getSummary($i);
 
 	// Time created
-	print $BWLObj->getTimeCreated($i);
+	// $format is optional and can be set to override the format set with setDateFormat()
+	print $BWLObj->getTimeCreated($i,[string $format]);
 
 	// Time updated
-	print $BWLObj->getTimeUpdated($i);
+	// $format is optional and can be set to override the format set with setDateFormat()
+	print $BWLObj->getTimeUpdated($i,[string $format]);
 }
 ```
 
@@ -174,10 +176,12 @@ if (is_object($BWAObj) && $BWAObj->setURLPath($_REQUEST['url_path']) && $BWAObj-
 	print $BWAObj->getContent();
 
 	// Time created
-	print $BWAObj->getTimeCreated();
+	// $format is optional and can be set to override the format set with setDateFormat()
+	print $BWAObj->getTimeCreated([string $format]);
 
 	// Time updated
-	print $BWAObj->getTimeUpdated();
+	// $format is optional and can be set to override the format set with setDateFormat()
+	print $BWAObj->getTimeUpdated([string $format]);
 
 	// Loop through related articles:
 
