@@ -5,6 +5,7 @@ class blogviewer_article {
 	private $URLPath;
 
 	private $PostArray;
+	private $DateFormat = 'Y-m-d';
 	private $RelatedList = array();
 
 	function __construct () {
@@ -30,6 +31,11 @@ class blogviewer_article {
 		else {
 			return FALSE;
 		}
+	}
+
+	public function setDateFormat ($string) {
+		$this->DateFormat = $string;
+		return TRUE;
 	}
 
 	/**
@@ -75,6 +81,24 @@ class blogviewer_article {
 	public function getContent () {
 		if (is_array($this->PostArray)) {
 			return $this->PostArray['content'];
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function getTimeCreated ($i) {
+		if (is_array($this->PostArray)) {
+			return date($this->DateFormat,strtotime($this->PostArray['time_created']));
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function getTimeUpdated ($i) {
+		if (is_array($this->PostArray)) {
+			return date($this->DateFormat,strtotime($this->PostArray['time_updated']));
 		}
 		else {
 			return FALSE;

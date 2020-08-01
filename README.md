@@ -144,6 +144,13 @@ require_once('./logic/classes/blogviewer_article.class.php');
 $BWAObj = new blogviewer_article;
 ```
 
+Options:
+```php
+// The time and date format, https://www.php.net/manual/en/datetime.formats.date.php
+// Default value: Y-m-d
+$BWAObj->setDateFormat('Y-m-d');
+```
+
 Load the article:
 ```php
 if (is_object($BWAObj) && $BWAObj->setURLPath($_REQUEST['url_path']) && $BWAObj->loadArticle() && $BWAObj->loadRelated()) {
@@ -165,6 +172,12 @@ if (is_object($BWAObj) && $BWAObj->setURLPath($_REQUEST['url_path']) && $BWAObj-
 
 	// Content
 	print $BWAObj->getContent();
+
+	// Time created
+	print $BWAObj->getTimeCreated();
+
+	// Time updated
+	print $BWAObj->getTimeUpdated();
 
 	// Loop through related articles:
 
