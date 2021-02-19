@@ -467,6 +467,7 @@ class blog_admin {
 		if (is_numeric($this->PostID)) {
 			$QueryString = "SELECT ";
 			$QueryString .= "blog_posts.*, ";
+			$QueryString .= "DATE_FORMAT(blog_posts.time_published,'%Y-%m-%d') AS pubdate, ";
 			$QueryString .= "blog_tags.id AS tag_id, ";
 			$QueryString .= "blog_tags.title AS tag_title, ";
 			$QueryString .= "blog_tags.path AS tag_path ";

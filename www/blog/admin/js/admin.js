@@ -945,7 +945,12 @@ a.blog.edit = (function(){
 				cache: false,
 				success:function(result) {
 					if (result.success && result.data) {
-						window.open('/blog/post/'+result.data.url_path+'/');
+						if (use_date_in_url) {
+							window.open('/blog/post/'+result.data.pubdate+'/'+result.data.url_path+'/');
+						}
+						else {
+							window.open('/blog/post/'+result.data.url_path+'/');
+						}
 					}
 				}
 			}).done(function(){
