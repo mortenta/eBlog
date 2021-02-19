@@ -126,6 +126,7 @@ foreach ($BWLObj->getListIndex() as $i) {
 	print $BWLObj->getPubDate($i);
 	// Example
 	<a href="/blog/post/<?php print $BWLObj->getPubDate($i); ?>/<?php print $BWLObj->getPath($i); ?>/">Read more</a>
+	// Remember to set config $SiteSettings['use_date_in_url'] = TRUE;
 
 	// Title
 	print $BWLObj->getTitle($i);
@@ -212,6 +213,7 @@ if (is_object($BWAObj) && $BWAObj->setURLPath($_REQUEST['url_path']) && $BWAObj-
 		print $BWAObj->getPubDate($i);
 		// Example
 		<a href="/blog/post/<?php print $BWAObj->getPubDate($i); ?>/<?php print $BWAObj->getPath($i); ?>/">Read more</a>
+		// Remember to set config $SiteSettings['use_date_in_url'] = TRUE;
 
 		// Related article title
 		print $BWAObj->getRelTitle($i);

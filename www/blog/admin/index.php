@@ -16,6 +16,9 @@ if (is_object($BlogAdminObj) && $BlogAdminObj->isAuthorized()) {
 			<script src="./js/tinymce/js/tinymce/tinymce.min.js" type="text/javascript"></script>
 			<script src="./js/tinymce/js/tinymce/jquery.tinymce.min.js" type="text/javascript"></script>
 			<script src="./js/moment.min.js" type="text/javascript"></script>
+			<script>
+				var use_date_in_url = <?php print $BlogAdminObj->useDateInURL(); ?>;
+			</script>
 			<script src="./js/admin.js" type="text/javascript"></script>
 		</head>
 		<body>

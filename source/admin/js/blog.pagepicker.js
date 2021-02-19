@@ -38,7 +38,13 @@ a.blog.pagepicker = (function(){
 							$(area).empty().append(content);
 							setTimeout(function(){
 								$('button[data-action="select"]').unbind('click').click(function(){
-									cb('/blog/post/'+$(this).attr('data-path')+'/',{
+									if (use_date_in_url) {
+										var fullpath = '/blog/post/'+$(this).attr('data-pubdate')+'/'+$(this).attr('data-path')+'/';
+									}
+									else {
+										var fullpath = '/blog/post/'+$(this).attr('data-path')+'/';
+									}
+									cb(fullpath,{
 										id:$(this).attr('data-id'),
 										title:$(this).attr('data-title')
 									});

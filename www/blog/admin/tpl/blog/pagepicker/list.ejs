@@ -5,7 +5,7 @@
 		<tr>
 			<td class="center" style="width:20px;"><span style="position:relative;top:-2px;color:<%=e.published==1?'#00bf00':'#ff0076'%>;">&#11044;</span></td>
 			<td><%=e.title%></td>
-			<td class="right"><button class="btn btn-primary" data-action="select" data-path="<%=e.url_path%>" data-id="<%=e.id%>" data-title="<%=e.title%>">Select</button></td>
+			<td class="right"><button class="btn btn-primary" data-action="select" data-pubdate="<%=e.pubdate%>" data-path="<%=e.url_path%>" data-id="<%=e.id%>" data-title="<%=e.title%>">Select</button></td>
 		</tr>
 		<% }); %>
 	</tbody>

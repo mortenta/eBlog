@@ -184,6 +184,7 @@ class blog_admin {
 		$QueryString .= "blog_posts.time_created, ";
 		$QueryString .= "blog_posts.time_updated, ";
 		$QueryString .= "blog_posts.time_published, ";
+		$QueryString .= "DATE_FORMAT(blog_posts.time_published,'%Y-%m-%d') AS pubdate, ";
 		$QueryString .= "blog_posts.published, ";
 		$QueryString .= "blog_posts.url_path, ";
 		$QueryString .= "blog_posts.title ";
@@ -843,6 +844,10 @@ class blog_admin {
 		else {
 			return FALSE;
 		}
+	}
+
+	public function useDateInURL () {
+		return ($this->SiteSettings['use_date_in_url']==1)?'true':'false';
 	}
 
 
