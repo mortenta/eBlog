@@ -143,6 +143,15 @@ class blogviewer_article {
 		}
 	}
 
+	public function getRelPubDate ($i) {
+		if (is_numeric($i) && is_array($this->RelatedList[$i])) {
+			return date('Y-m-d',strtotime($this->RelatedList[$i]['time_published']));
+		}
+		else {
+			return FALSE;
+		}
+	}
+
 	public function getRelPath ($i) {
 		if (is_numeric($i) && is_array($this->RelatedList[$i])) {
 			return $this->RelatedList[$i]['url_path'];
@@ -212,7 +221,10 @@ class blogviewer_article {
 			$QueryString .= "blog_posts.title, ";
 			$QueryString .= "blog_posts.url_path, ";
 			$QueryString .= "blog_posts.summary, ";
-			$QueryString .= "blog_posts.img ";
+			$QueryString .= "blog_posts.img, ";
+			$QueryString .= "blog_posts.time_created, ";
+			$QueryString .= "blog_posts.time_updated, ";
+			$QueryString .= "blog_posts.time_published ";
 			$QueryString .= "FROM ";
 			$QueryString .= "blog_posts as obp ";
 			$QueryString .= "LEFT JOIN blog_post_relations ON blog_post_relations.postid=obp.id ";

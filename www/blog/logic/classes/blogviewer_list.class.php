@@ -61,6 +61,15 @@ class blogviewer_list {
 		}
 	}
 
+	public function getPubDate ($i) {
+		if (is_numeric($i) && is_array($this->ArticleList[$i])) {
+			return date('Y-m-d',strtotime($this->ArticleList[$i]['time_published']));
+		}
+		else {
+			return FALSE;
+		}
+	}
+
 	public function getPath ($i) {
 		if (is_numeric($i) && is_array($this->ArticleList[$i])) {
 			return $this->ArticleList[$i]['url_path'];
