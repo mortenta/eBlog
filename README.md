@@ -123,9 +123,9 @@ foreach ($BWLObj->getListIndex() as $i) {
 
 	// If you choose option 2 in the .htaccess file to the include the publishing date in the URL,
 	// you must add the publishing date to the link as well:
-	 print $BWLObj->getPubDate($i);
-	 // Example
-	 <a href="/blog/post/<?php print $BWLObj->getPubDate($i); ?>/<?php print $BWLObj->getPath($i); ?>/">Read more</a>
+	print $BWLObj->getPubDate($i);
+	// Example
+	<a href="/blog/post/<?php print $BWLObj->getPubDate($i); ?>/<?php print $BWLObj->getPath($i); ?>/">Read more</a>
 
 	// Title
 	print $BWLObj->getTitle($i);
@@ -209,9 +209,9 @@ if (is_object($BWAObj) && $BWAObj->setURLPath($_REQUEST['url_path']) && $BWAObj-
 
 		// If you choose option 2 in the .htaccess file to the include the publishing date in the URL,
 		// you must add the publishing date to the link as well:
-		 print $BWAObj->getPubDate($i);
-		 // Example
-		 <a href="/blog/post/<?php print $BWAObj->getPubDate($i); ?>/<?php print $BWAObj->getPath($i); ?>/">Read more</a>
+		print $BWAObj->getPubDate($i);
+		// Example
+		<a href="/blog/post/<?php print $BWAObj->getPubDate($i); ?>/<?php print $BWAObj->getPath($i); ?>/">Read more</a>
 
 		// Related article title
 		print $BWAObj->getRelTitle($i);
