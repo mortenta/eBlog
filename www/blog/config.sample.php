@@ -9,3 +9,4 @@ $DBSettings['password'] = 'password'; // Password to the database
 // Site
 $SiteSettings['name'] = 'eBlog'; // Unicode icons is your logo? Find at https://unicode-table.com/en/
 $SiteSettings['siteurl'] = 'https://www.yoursite.com'; // Website URL without trailing slash
+$SiteSettings['use_date_in_url'] = FALSE;
