@@ -56,6 +56,15 @@ class blogviewer_article {
 	* Getters
 	*/
 
+	public function getPostArray () {
+		if (is_array($this->PostArray)) {
+			return $this->PostArray;
+		}
+		else {
+			return FALSE;
+		}
+	}
+
 	public function getTitle () {
 		if (is_array($this->PostArray)) {
 			return $this->PostArray['title'];
