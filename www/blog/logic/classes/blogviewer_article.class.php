@@ -3,6 +3,7 @@ class blogviewer_article {
 
 	private $DBObj;
 	private $URLPath;
+	private $Date;
 
 	private $PostArray;
 	private $RelatedList = array();
@@ -35,6 +36,13 @@ class blogviewer_article {
 		else {
 			return FALSE;
 		}
+	}
+
+	public function setDate ($string) {
+		if (is_string($string) && strlen($string)>0) {
+			$this->Date = $string;
+		}
+		return TRUE;
 	}
 
 	public function setDateFormat ($string) {
@@ -212,7 +220,29 @@ class blogviewer_article {
 			$q->execute();
 			if (is_array($Row = $q->fetch(PDO::FETCH_ASSOC))) {
 				$this->PostArray = $Row;
-				return TRUE;
+				if ($this->Date) {
+					if (is_string($this->PostArray['time_published']) && strlen($this->PostArray['time_published'])==19) {
+						$PostDate = substr($this->PostArray['time_published'],0,10);
+					}
+					elseif (is_string($this->PostArray['time_created']) && strlen($this->PostArray['time_created'])==19) {
+						$PostDate = substr($this->PostArray['time_created'],0,10);
+					}
+					if ($PostDate==$this->Date) {
+						return TRUE;
+					}
+					else {
+						// Change to a path with the correct date
+						$Path = $_SERVER['REQUEST_URI'];
+						$NewPath = str_replace('/'.$this->Date.'/','/'.$PostDate.'/',$Path);
+						// Redirect to correct path
+						header("HTTP/1.1 301 Moved Permanently"); 
+						header("Location: ".$NewPath); 
+						exit();
+					}
+				}
+				else {
+					return TRUE;
+				}
 			}
 			else {
 				return FALSE;
