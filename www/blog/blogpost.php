@@ -1,7 +1,7 @@
 <?php
 require_once('./logic/classes/blogviewer_article.class.php');
 $BWAObj = new blogviewer_article;
-if (is_object($BWAObj) && $BWAObj->setURLPath($_REQUEST['url_path']) && $BWAObj->loadArticle() && $BWAObj->loadRelated()) {
+if (is_object($BWAObj) && $BWAObj->setURLPath($_REQUEST['url_path']) && $BWAObj->setDate($_REQUEST['date']) && $BWAObj->loadArticle() && $BWAObj->loadRelated()) {
 ?>
 <!doctype html>
 <html lang="en">
