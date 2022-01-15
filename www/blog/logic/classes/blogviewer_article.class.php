@@ -30,6 +30,9 @@ class blogviewer_article {
 
 	public function setURLPath ($string) {
 		if (is_string($string) && strlen($string) <= 255) {
+			// Remove any slashes
+			$string = str_replace('/','',$string);
+			// Convert to ASCII
 			$this->URLPath = $this->toAscii($string);
 			return TRUE;
 		}
