@@ -126,13 +126,113 @@ class blogviewer_list {
 		}
 	}
 
-	
+	public function countArticles () {
+		$QueryString = "SELECT COUNT(*) AS count ";
+		$QueryString .= "FROM ";
+		$QueryString .= "blog_posts";
+		$q = $this->DBObj->prepare($QueryString);
+		$q->execute();
+		if (is_array($Row = $q->fetch(PDO::FETCH_ASSOC)) && is_numeric($Row['count'])) {
+			return $Row['count'];
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function genPagination ($hits,$start,$limit,$max_page_numbers) {
+		if (is_numeric($hits) && is_numeric($start) && is_numeric($limit) && is_numeric($max_page_numbers)) {
+			// Validate/correct Start
+			if (is_numeric($start)) {
+				if ($start <= 0) {
+					$start = 0;
+				}
+				elseif ($start >= $hits) {
+					if ($hits >= 1) {
+						$start = $hits-1;
+					}
+					else {
+						$start = 0;
+					}
+				}
+				else {
+					// OK, passed
+				}
+			}
+			else {
+				$start = 0;
+			}
+			$OutputArray['has_prev_page'] = TRUE;
+			$OutputArray['has_next_page'] = TRUE;
+			// Make page numbers
+			for ($i=0;$i<=$hits;$i=$i+$limit) {
+				$PageCounter++;
+				if ($i >= $start-($limit-1+($limit*floor($max_page_numbers/2)))) {
+					if ($i >= $hits) {
+						break;
+					}
+					if ($PageLimitCounter <= $max_page_numbers) {
+						$PageLimitCounter++;
+						$OutputArray['pages'][$PageCounter]['pagenumber'] = $PageCounter;
+						$OutputArray['pages'][$PageCounter]['start'] = $i;
+						if ($start >= $i && $start < ($i+$limit)) {
+							$OutputArray['pages'][$PageCounter]['current_page'] = TRUE;
+							$OutputArray['start'] = $i;
+							$OutputArray['next_page'] = $i + $limit;
+							$OutputArray['prev_page'] = $i - $limit;
+						}
+						else {
+							$OutputArray['pages'][$PageCounter]['current_page'] = FALSE;
+						}
+					}
+					// Find last number
+					$OutputArray['end'] = $OutputArray['start']+$limit;
+					if ($OutputArray['end'] >= $hits) {
+						$OutputArray['end'] = $hits;
+					}
+				}
+			}
+			// Fix prev/next
+			if ($OutputArray['next_page'] >= $hits) {
+				$OutputArray['next_page'] = $hits-$limit;
+				$OutputArray['has_next_page'] = FALSE;
+			}
+			if ($OutputArray['prev_page'] < 0) {
+				$OutputArray['prev_page'] = 0;
+				$OutputArray['has_prev_page'] = FALSE;
+			}
+			if ($OutputArray['next_page'] == $OutputArray['prev_page']) {
+				$OutputArray['next_page'] = 0;
+				$OutputArray['has_next_page'] = FALSE;
+			}
+			if ($OutputArray['next_page'] < 0) {
+				$OutputArray['next_page'] = 0;
+			}
+			// Output
+			if (is_array($OutputArray) && $hits > 0) {
+				if (is_array($OutputArray['pages'])) {
+					$TmpPages = $OutputArray['pages'];
+					unset($OutputArray['pages']);
+					foreach ($TmpPages as $Page) {
+						$OutputArray['pages'][] = $Page;
+					}
+				}
+				return $OutputArray;
+			}
+			else {
+				return FALSE;
+			}
+		}
+		else {
+			return FALSE;
+		}
+	}
 
 	/**
 	* Public functions
 	*/
 
-	public function listArticles ($Limit=FALSE) {
+	public function listArticles ($Offset=0,$Limit=FALSE) {
 		if (is_object($this->DBObj)) {
 			$QueryString = "SELECT ";
 			$QueryString .= "blog_posts.id, ";
@@ -159,8 +259,8 @@ class blogviewer_list {
 			}
 			$QueryString .= "GROUP BY blog_posts.id ";
 			$QueryString .= "ORDER BY time_published DESC ";
-			if (is_numeric($Limit)) {
-				$QueryString .= "LIMIT ".$Limit;
+			if (is_numeric($Offset) && $Offset>=0 && is_numeric($Limit) && $Limit>0) {
+				$QueryString .= "LIMIT ".$Offset.",".$Limit;
 			}
 			$q = $this->DBObj->prepare($QueryString);
 			if (is_numeric($this->Year)) {

@@ -1,10 +1,15 @@
 <?php
 require_once('./logic/classes/blogviewer_list.class.php');
+$Offset = $_REQUEST['offset'];
+if (!is_numeric($Offset)) {
+	$Offset = 0;
+}
+$ArticlesPerPage = 5;
 $BWLObj = new blogviewer_list;
 if (is_object($BWLObj)) {
 	$BWLObj->setDateFormat('Y-m-d');
 	$BWLObj->setDefaultImage('https://picsum.photos/200/150');
-	if ($BWLObj->listArticles()) {
+	if (is_numeric($ArticleCount = $BWLObj->countArticles()) && $BWLObj->listArticles($Offset,$ArticlesPerPage)) {
 ?>
 <!doctype html>
 <html lang="en">
@@ -45,6 +50,24 @@ if (is_object($BWLObj)) {
 			</div>
 		</div>
 		<?php
+			}
+			if (is_array($PageArray = $BWLObj->genPagination($ArticleCount,$Offset,$ArticlesPerPage,3))) {
+				print '<ul class="pagination">';
+				if ($PageArray['has_prev_page']) {
+					print '<li><a href="./?offset='.$PageArray['prev_page'].'">Previous</a></li>';
+				}
+				if (is_array($PageArray['pages'])) {
+					foreach ($PageArray['pages'] as $Page) {
+						print '<li><a href="./?offset='.$Page['start'].'" class="';
+						print $Page['current_page']?'selected':'';
+						print '">'.$Page['pagenumber'].'</a></li>';
+					}
+				}
+				if ($PageArray['has_next_page']) {
+					print '<li><a href="./?offset='.$PageArray['next_page'].'">Next</a></li>';
+				}
+				
+				print '</ul>';
 			}
 		?>
 	</div>
