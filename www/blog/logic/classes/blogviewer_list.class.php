@@ -323,7 +323,6 @@ class blogviewer_list {
 			$q->execute();
 			$TagIDArray = array();
 			foreach ($q->fetchAll(PDO::FETCH_ASSOC) AS $Row) {
-				print_r($Row);
 				if (is_string($Row['tag_ids'])) {
 					if (is_array($TagIDs = explode(',',$Row['tag_ids']))) {
 						foreach ($TagIDs as $TagID) {
