@@ -174,18 +174,18 @@ class blogviewer_list {
 	}
 
 	public function countArticles () {
-		$QueryString = "SELECT COUNT(*) AS count ";
+		$QueryString = "SELECT COUNT(DISTINCT(blog_posts.id)) AS count ";
 		$QueryString .= "FROM ";
 		$QueryString .= "blog_posts ";
 		$QueryString .= "LEFT JOIN blog_post_tag_map ON blog_post_tag_map.postid = blog_posts.id ";
 		$QueryString .= "LEFT JOIN blog_tags ON blog_tags.id = blog_post_tag_map.tagid ";
 		$QueryString .= "WHERE ";
 		$QueryString .= "published=1 ";
-		if (is_string($this->Category)) {
+		if (is_string($this->Category) && strlen($this->Category)>2) {
 			$QueryString .= "AND blog_tags.path = :category ";
 		}
 		$q = $this->DBObj->prepare($QueryString);
-		if (is_string($this->Category)) {
+		if (is_string($this->Category) && strlen($this->Category)>2) {
 			$q->bindParam(":category",$this->Category);
 		}
 		$q->execute();
