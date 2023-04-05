@@ -25,6 +25,8 @@ a.blog.edit = (function(){
 								// Init
 								my.initEditor(id);
 								my.relatedList.init(id);
+								// Init tag picker
+								my.tagpicker.init(result.data);
 								// Prevent submit
 								$('form[name="edit_post"], button[data-action="btn-none"]').submit(function(e){
 									e.preventDefault();
@@ -431,6 +433,218 @@ a.blog.edit = (function(){
 							}
 						}
 					});
+				});
+			}
+		},
+		tagpicker:{
+			init:function(result){
+				var bres = {
+					'info':result
+				};
+				// List available
+				my.tagpicker.listAvailable(function(result){
+					var c = '';
+					result.list.forEach(function(e){
+						c += '<option value="'+e.id+'" data-path="'+e.path+'">'+e.title+'</option>';
+					});
+					$('select[name="taglist"]').empty().append(c);
+				},function(){});
+				// List selected
+				$('ul.tags').empty();
+				if (bres.info.taglist) {
+					bres.info.taglist.forEach(function(e){
+						$('ul.tags').append('<li data-tid="'+e.id+'"><span>'+e.title+'</span><i data-action="remove-selected-tag" data-tid="'+e.id+'">&#x24E7;</i></li>');
+					});
+				}
+				// Binds
+				$('button[data-action="add-tag"]').unbind('click').click(function(){
+					my.tagpicker.add($('select[name="taglist"]>option:selected').val(),bres.info.id,function(){
+						
+					});
+				});
+				$('button[data-action="edit-tag"]').unbind('click').click(function(){
+					my.tagpicker.edit($('select[name="taglist"]>option:selected').val(),function(result){});
+				});
+				$('button[data-action="delete-tag"]').unbind('click').click(function(){
+					my.tagpicker.delete($('select[name="taglist"]>option:selected').val(),function(){
+						
+					});
+				});
+				$('button[data-action="create-tag"]').unbind('click').click(function(){
+					my.tagpicker.create(function(e){
+						// Insert into list
+						$('select[name="taglist"]').append('<option value="'+e.tid+'" data-path="'+e.path+'">'+e.title+'</option>');
+						$('select[name="taglist"]').val(e.tid);
+						my.tagpicker.add($('select[name="taglist"]>option:selected').val(),bres.info.id,function(){
+							
+						});
+					});
+				});
+				my.tagpicker.bindRemove(bres.info.id);
+			},
+			bindRemove:function(bid){
+				$('ul.tags>li>i[data-action="remove-selected-tag"]').unbind('click').click(function(){
+					$(this).parent().hide();
+					my.tagpicker.remove($(this).attr('data-tid'),bid,function(){});
+				});
+			},
+			listAvailable:function(cb_success,cb_error){
+				$.ajax({
+					type:'GET',
+					url:'./api/blog/tag/list/',
+					data:{},
+					dataType:'json',
+					cache: false,
+					success:function(result) {
+						if (result.success) {
+							cb_success(result);
+						}
+						else {
+							cb_error();
+						}
+					}
+				});
+			},
+			add:function(id,bid,cb){
+				var title = $('select[name="taglist"]>option[value="'+id+'"]').text();
+				$.ajax({
+					type:'POST',
+					url:'./api/blog/tag/add/',
+					data:{
+						bid:bid,
+						tid:id
+					},
+					dataType:'json',
+					cache: false,
+					success:function(result) {
+						if (result.success) {
+							if ($('ul.tags>li>i[data-tid="'+id+'"]').length == 0) {
+								$('ul.tags').append('<li data-tid="'+id+'"><span>'+title+'</span><i data-action="remove-selected-tag" data-tid="'+id+'">&#x24E7;</i></li>');
+								my.tagpicker.bindRemove(bid);
+							}
+						}
+						else {
+							alert('Error');
+						}
+					}
+				});
+			},
+			edit:function(id,cb){
+				var urlify = function(a){return a.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "-").replace(/^-+|-+$/g, '')};
+				var title = $('select[name="taglist"]>option[value="'+id+'"]').text();
+				var path = $('select[name="taglist"]>option[value="'+id+'"]').attr('data-path');
+				var title = prompt("Title",title);
+				if (title != null) {
+					var path = prompt("Path",urlify(path));
+					if (path != null) {
+						$.ajax({
+							type:'POST',
+							url:'./api/blog/tag/edit/',
+							data:{
+								title:title,
+								path:path,
+								tid:id
+							},
+							dataType:'json',
+							cache: false,
+							success:function(result) {
+								if (result.success) {
+									// Update tag list
+									my.tagpicker.listAvailable(function(result){
+										$('select[name="taglist"]').empty();
+										result.list.forEach(function(e){
+											$('select[name="taglist"]').append('<option value="'+e.id+'" data-path="'+e.path+'">'+e.title+'</option>');
+										});
+										setTimeout(function(){
+											$('select[name="taglist"]').val(id);
+										},100);
+									},function(){});
+									// Update selected tags
+									$('ul.tags>li[data-tid="'+id+'"]>span').text(title);
+									// Callback
+									cb(result);
+								}
+								else {
+									alert('Error');
+								}
+							}
+						});
+					}
+				}
+			},
+			delete:function(id,cb){
+				if (confirm('Really delete this tag?')) {
+					if (confirm('Sure? Really?')) {
+						$.ajax({
+							type:'POST',
+							url:'./api/blog/tag/delete/',
+							data:{
+								tid:id
+							},
+							dataType:'json',
+							cache: false,
+							success:function(result) {
+								if (result.success) {
+									$('select[name="taglist"]>option[value="'+id+'"]').remove();
+									$('ul.tags>li[data-tid="'+id+'"]').remove();
+									cb();
+								}
+								else {
+									alert('Error');
+								}
+							}
+						});
+					}
+				}
+			},
+			create:function(cb){
+				var urlify = function(a){return a.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "-").replace(/^-+|-+$/g, '')};
+				var title = prompt("Title","");
+				if (title != null) {
+					var path = prompt("Path",urlify(title));
+					if (path != null) {
+						$.ajax({
+							type:'POST',
+							url:'./api/blog/tag/create/',
+							data:{
+								title:title,
+								path:path
+							},
+							dataType:'json',
+							cache: false,
+							success:function(result) {
+								if (result.success) {
+									cb(result);
+								}
+								else {
+									alert('Error');
+								}
+							}
+						});
+					}
+				}
+			},
+			remove:function(id,bid,cb){
+				// Detach from article
+				$.ajax({
+					type:'POST',
+					url:'./api/blog/tag/detach/',
+					data:{
+						bid:bid,
+						tid:id
+					},
+					dataType:'json',
+					cache: false,
+					success:function(result) {
+						if (result.success) {
+							$('ul.tags>li[data-tid="'+id+'"]').remove();
+							cb();
+						}
+						else {
+							$('ul.tags>li[data-tid="'+id+'"]').show();
+							alert('Error');
+						}
+					}
 				});
 			}
 		},

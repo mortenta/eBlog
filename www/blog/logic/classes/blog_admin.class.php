@@ -13,6 +13,9 @@ class blog_admin {
 	private $Title;
 	private $Summary;
 	private $Content;
+	private $TagID;
+	private $TagName;
+	private $TagPath;
 	private $Img;
 	private $Notes;
 	private $Published;
@@ -102,6 +105,26 @@ class blog_admin {
 		return TRUE;
 	}
 
+	public function setTagID ($int) {
+		if (is_numeric($int)) {
+			$this->TagID = $int;
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function setTagTitle ($string) {
+		$this->TagTitle = $string;
+		return TRUE;
+	}
+
+	public function setTagPath ($string) {
+		$this->TagPath = $string;
+		return TRUE;
+	}
+
 	// List filters
 
 	public function setDisplay ($string) {
@@ -176,6 +199,18 @@ class blog_admin {
 
 	public function getFilename () {
 		return $this->Filename;
+	}
+
+	public function getTagID () {
+		return $this->TagID;
+	}
+
+	public function getTagTitle () {
+		return $this->TagTitle;
+	}
+
+	public function getTagPath () {
+		return $this->TagPath;
 	}
 
 	/**
@@ -500,6 +535,9 @@ class blog_admin {
 				unset($OA['tag_id']);
 				unset($OA['tag_title']);
 				unset($OA['tag_path']);
+				if (!is_array($OA['taglist'])) {
+					$OA['taglist'] = array();
+				}
 				return $OA;
 			}
 			else {
@@ -617,6 +655,138 @@ class blog_admin {
 		}
 		else {
 			$this->ErrorMsg = 'Missing file or postID';
+			return FALSE;
+		}
+	}
+
+	public function listTags () {
+		$QueryString = "SELECT ";
+		$QueryString .= "id, title, path ";
+		$QueryString .= "FROM ";
+		$QueryString .= "blog_tags ";
+		$QueryString .= "ORDER BY title";
+		$q = $this->DBObj->prepare($QueryString);
+		$q->execute();
+		foreach ($q->fetchAll(PDO::FETCH_ASSOC) AS $Row) {
+			$OA[] = $Row;
+		}
+		if (is_array($OA)) {
+			return $OA;
+		}
+		else {
+			return array();
+		}
+	}
+
+	public function createTag () {
+		if (is_string($this->TagTitle) && is_string($this->TagPath)) {
+			$QueryString = "INSERT INTO ";
+			$QueryString .= "blog_tags ";
+			$QueryString .= "SET ";
+			$QueryString .= "title=:title, ";
+			$QueryString .= "path=:path";
+			$q = $this->DBObj->prepare($QueryString);
+			$q->bindParam(":title",$this->TagTitle);
+			$q->bindParam(":path",$this->TagPath);
+			if ($q->execute() && is_numeric($this->TagID = $this->DBObj->lastInsertId())) {
+				return TRUE;
+			}
+			else {
+				return FALSE;
+			}
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function addTag () {
+		if (is_numeric($this->PostID) && is_numeric($this->TagID)) {
+			$QueryString = "INSERT INTO blog_post_tag_map ";
+			$QueryString .= "(postid,tagid) ";
+			$QueryString .= "SELECT :postid, :tagid ";
+			$QueryString .= "FROM DUAL WHERE NOT EXISTS (";
+			$QueryString .= "SELECT id FROM blog_post_tag_map WHERE ";
+			$QueryString .= "postid=:postid AND ";
+			$QueryString .= "tagid=:tagid LIMIT 1)";
+			$q = $this->DBObj->prepare($QueryString);
+			$q->bindParam(":postid",$this->PostID);
+			$q->bindParam(":tagid",$this->TagID);
+			if ($q->execute()) {
+				return TRUE;
+			}
+			else {
+				return FALSE;
+			}
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function editTag () {
+		if (is_string($this->TagTitle) && is_string($this->TagPath) && is_numeric($this->TagID)) {
+			$QueryString = "UPDATE ";
+			$QueryString .= "blog_tags ";
+			$QueryString .= "SET ";
+			$QueryString .= "title=:title, ";
+			$QueryString .= "path=:path ";
+			$QueryString .= "WHERE ";
+			$QueryString .= "id=:tid";
+			$q = $this->DBObj->prepare($QueryString);
+			$q->bindParam(":title",$this->TagTitle);
+			$q->bindParam(":path",$this->TagPath);
+			$q->bindParam(":tid",$this->TagID);
+			if ($q->execute()) {
+				return TRUE;
+			}
+			else {
+				return FALSE;
+			}
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function detachTag () {
+		if (is_numeric($this->PostID) && is_numeric($this->TagID)) {
+			$QueryString = "DELETE FROM ";
+			$QueryString .= "blog_post_tag_map ";
+			$QueryString .= "WHERE ";
+			$QueryString .= "postid=:postid AND ";
+			$QueryString .= "tagid=:tagid LIMIT 1";
+			$q = $this->DBObj->prepare($QueryString);
+			$q->bindParam(":postid",$this->PostID);
+			$q->bindParam(":tagid",$this->TagID);
+			if ($q->execute()) {
+				return TRUE;
+			}
+			else {
+				return FALSE;
+			}
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function deleteTag () {
+		if (is_numeric($this->TagID)) {
+			$QueryString = "DELETE FROM ";
+			$QueryString .= "blog_tags ";
+			$QueryString .= "WHERE ";
+			$QueryString .= "id=:tagid LIMIT 1";
+			$q = $this->DBObj->prepare($QueryString);
+			$q->bindParam(":tagid",$this->TagID);
+			if ($q->execute()) {
+				return TRUE;
+			}
+			else {
+				return FALSE;
+			}
+		}
+		else {
 			return FALSE;
 		}
 	}

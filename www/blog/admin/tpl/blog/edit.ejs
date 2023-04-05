@@ -78,6 +78,49 @@
 					</div>
 					<div class="grid space" style="margin: 1em 0 .5em 0;">
 						<div class="row">
+							<div class="col col-12">
+								<div class="form-group">
+									<style scoped>
+										ul.tags {
+											display:block;
+											padding:0;
+											margin: 1em 0 0 0;
+										}
+										ul.tags > li {
+											display: inline-block;
+											background-color: #607D8B;
+											list-style: none;
+											padding: 1px 14px 1px 10px;
+											border-radius: 5px 15px 15px 5px;
+											color: #fff;
+											margin: 0 5px 5px 0;
+										}
+										ul.tags > li > i {
+											position: relative;
+											top: 0;
+											left: 10px;
+											cursor: pointer;
+											font-style: normal;
+										}
+										select[name="taglist"] {
+											display: inline;
+											width: auto;
+											min-width: 100px;
+										}
+									</style>
+									<label style="margin-bottom: 5px;">Tags</label>
+									<select name="taglist"></select> 
+									<button data-action="add-tag" class="btn btn-sm btn-primary" style="padding: 4px 8px;position:relative;top:-1px;">Add tag</button> 
+									<button data-action="edit-tag" class="btn btn-sm btn-warning" style="padding: 4px 8px;position:relative;top:-1px;">Edit tag</button> 
+									<button data-action="delete-tag" class="btn btn-sm btn-danger" style="padding: 4px 8px;position:relative;top:-1px;">Delete tag</button> 
+									<button data-action="create-tag" class="btn btn-sm btn-success" style="padding: 4px 8px;position:relative;top:-1px;">Create new tag...</button> 
+									<ul class="tags"></ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="grid space" style="margin: 1em 0 .5em 0;">
+						<div class="row">
 							<div class="col col-6">
 								&nbsp;
 							</div>
