@@ -121,6 +121,24 @@ class blogviewer_article {
 		}
 	}
 
+	public function getURLPath () {
+		if (is_array($this->PostArray)) {
+			return $this->PostArray['url_path'];
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function getImg () {
+		if (is_array($this->PostArray)) {
+			return $this->PostArray['img'];
+		}
+		else {
+			return FALSE;
+		}
+	}
+
 	public function getTimeCreated ($format=FALSE) {
 		if (is_array($this->PostArray)) {
 			if (!is_string($format)) {
