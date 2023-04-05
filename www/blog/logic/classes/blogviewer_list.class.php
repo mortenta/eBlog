@@ -2,6 +2,7 @@
 class blogviewer_list {
 
 	private $DBObj;
+	private $Category;
 	private $ArticleList = array();
 
 	private $DateFormat = 'Y-m-d';
@@ -36,6 +37,11 @@ class blogviewer_list {
 
 	public function setLeadingImgPath ($string) {
 		$this->LeadingImgPath = $string;
+		return TRUE;
+	}
+
+	public function setCategory ($string) {
+		$this->Category = strtolower($string);
 		return TRUE;
 	}
 
@@ -126,11 +132,62 @@ class blogviewer_list {
 		}
 	}
 
+	public function getTagList ($i) {
+		if (is_numeric($i) && is_array($this->ArticleList[$i])) {
+			if (is_array($this->ArticleList[$i]['taglist']) && count($this->ArticleList[$i]['taglist'])>0) {
+				return $this->ArticleList[$i]['taglist'];
+			}
+			else {
+				return array();
+			}
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	public function getTagID ($Tag) {
+		if (is_array($Tag) && is_numeric($Tag['id'])) {
+			return $Tag['id'];
+		}
+		else {
+			return '';
+		}
+	}
+
+	public function getTagPath ($Tag) {
+		if (is_array($Tag) && is_string($Tag['path'])) {
+			return $Tag['path'];
+		}
+		else {
+			return '';
+		}
+	}
+
+	public function getTagTitle ($Tag) {
+		if (is_array($Tag) && is_string($Tag['title'])) {
+			return $Tag['title'];
+		}
+		else {
+			return '';
+		}
+	}
+
 	public function countArticles () {
 		$QueryString = "SELECT COUNT(*) AS count ";
 		$QueryString .= "FROM ";
-		$QueryString .= "blog_posts";
+		$QueryString .= "blog_posts ";
+		$QueryString .= "LEFT JOIN blog_post_tag_map ON blog_post_tag_map.postid = blog_posts.id ";
+		$QueryString .= "LEFT JOIN blog_tags ON blog_tags.id = blog_post_tag_map.tagid ";
+		$QueryString .= "WHERE ";
+		$QueryString .= "published=1 ";
+		if (is_string($this->Category)) {
+			$QueryString .= "AND blog_tags.path = :category ";
+		}
 		$q = $this->DBObj->prepare($QueryString);
+		if (is_string($this->Category)) {
+			$q->bindParam(":category",$this->Category);
+		}
 		$q->execute();
 		if (is_array($Row = $q->fetch(PDO::FETCH_ASSOC)) && is_numeric($Row['count'])) {
 			return $Row['count'];
@@ -243,7 +300,7 @@ class blogviewer_list {
 			$QueryString .= "blog_posts.url_path, ";
 			$QueryString .= "blog_posts.title, ";
 			$QueryString .= "blog_posts.summary, ";
-			$QueryString .= "GROUP_CONCAT(blog_tags.id) AS tag_ids, ";
+			$QueryString .= "GROUP_CONCAT(blog_post_tag_map.tagid) AS tag_ids, ";
 			$QueryString .= "blog_posts.img ";
 			$QueryString .= "FROM ";
 			$QueryString .= "blog_posts ";
@@ -251,9 +308,6 @@ class blogviewer_list {
 			$QueryString .= "LEFT JOIN blog_tags ON blog_tags.id = blog_post_tag_map.tagid ";
 			$QueryString .= "WHERE ";
 			$QueryString .= "published=1 ";
-			if (is_numeric($this->Year)) {
-				$QueryString .= "AND YEAR(blog_posts.time_published) = :year ";
-			}
 			if (is_string($this->Category)) {
 				$QueryString .= "AND blog_tags.path = :category ";
 			}
@@ -263,15 +317,13 @@ class blogviewer_list {
 				$QueryString .= "LIMIT ".$Offset.",".$Limit;
 			}
 			$q = $this->DBObj->prepare($QueryString);
-			if (is_numeric($this->Year)) {
-				$q->bindParam(":year",$this->Year);
-			}
 			if (is_string($this->Category)) {
 				$q->bindParam(":category",$this->Category);
 			}
 			$q->execute();
 			$TagIDArray = array();
 			foreach ($q->fetchAll(PDO::FETCH_ASSOC) AS $Row) {
+				print_r($Row);
 				if (is_string($Row['tag_ids'])) {
 					if (is_array($TagIDs = explode(',',$Row['tag_ids']))) {
 						foreach ($TagIDs as $TagID) {

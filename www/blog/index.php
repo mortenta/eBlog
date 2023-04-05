@@ -9,6 +9,7 @@ $BWLObj = new blogviewer_list;
 if (is_object($BWLObj)) {
 	$BWLObj->setDateFormat('Y-m-d');
 	$BWLObj->setDefaultImage('https://picsum.photos/200/150');
+	$BWLObj->setCategory($_REQUEST['tag']);
 	if (is_numeric($ArticleCount = $BWLObj->countArticles()) && $BWLObj->listArticles($Offset,$ArticlesPerPage)) {
 ?>
 <!doctype html>
@@ -47,6 +48,11 @@ if (is_object($BWLObj)) {
 				<a href="/blog/post/<?php print $BWLObj->getPath($i);?>/"><h2><?php print $BWLObj->getTitle($i); ?></h2></a>
 				<p><?php print $BWLObj->getSummary($i);?></p>
 				<small>Created: <?php print $BWLObj->getTimeCreated($i);?> | Updated: <?php print $BWLObj->getTimeUpdated($i);?></small>
+				<ul>
+					<?php foreach ($BWLObj->getTagList($i) as $Tag) { ?>
+						<li><a href="./?tag=<?php print $BWLObj->getTagPath($Tag); ?>"><?php print $BWLObj->getTagTitle($Tag); ?></a></li>
+					<?php } ?>
+				</ul>
 			</div>
 		</div>
 		<?php
