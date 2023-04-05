@@ -285,7 +285,7 @@ class blogviewer_list {
 				$PostList[] = $Row;
 			}
 			// Get tags
-			if (is_array($TagIDArray)) {
+			if (is_array($TagIDArray) && count($TagIDArray)>0) {
 				$QueryString = "SELECT ";
 				$QueryString .= "* ";
 				$QueryString .= "FROM ";
