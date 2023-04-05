@@ -293,9 +293,9 @@ class blog_admin {
 			$QueryString .= "meta_title=:meta_title, ";
 			$QueryString .= "meta_description=:meta_description, ";
 			$QueryString .= "published=:published, ";
-			if (!$DontUpdatePublishTime && $this->Published) {
-				$QueryString .= "time_published=:currentdatetime, ";
-			}
+			//if (!$DontUpdatePublishTime && $this->Published) {
+				//$QueryString .= "time_published=:currentdatetime, ";
+			//}
 			$QueryString .= "time_updated=:currentdatetime ";
 			$QueryString .= "WHERE ";
 			$QueryString .= "id=:bid ";
