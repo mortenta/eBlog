@@ -1,11 +1,29 @@
+a.sitesettings = {};
 a.router = (function(){
 	return {
 		defloc:'/blog/list/',
 		init:function(){
-			window.addEventListener('hashchange', function(e){
-				a.router.parseHash(window.location.hash.substring(1),e.oldURL.split("#")[1]);
-			});
-			a.router.parseHash(window.location.hash.substring(1),'/');
+			// Load site settings
+			$.ajax({
+				type:'GET',
+				url:'./api/sitesettings/load/',
+				data:{},
+				dataType:'json',
+				cache: false,
+				success:function(result) {
+					a.sitesettings = result.site_settings;
+					if (result.success) {
+						// Change page by hash
+						window.addEventListener('hashchange', function(e){
+							a.router.parseHash(window.location.hash.substring(1),e.oldURL.split("#")[1]);
+						});
+						a.router.parseHash(window.location.hash.substring(1),'/');
+					}
+					else {
+						alert('Error loading site settings, check config.php');
+					}
+				}
+			}).done(function(){});
 		},
 		parseHash:function(inp,lasthash){
 			if (!inp) {

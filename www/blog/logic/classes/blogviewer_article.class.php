@@ -20,7 +20,7 @@ class blogviewer_article {
 		if ($BlogDBObj->connectDB() && is_object($BlogDBObj->getDBObj())) {
 			$this->DBObj = $BlogDBObj->getDBObj();
 		}
-		$this->LeadingImgPath = '//'.$_SERVER['HTTP_HOST'].'/blog/img/tn/';
+		$this->LeadingImgPath = '//'.$_SERVER['HTTP_HOST'].$SiteSettings['basepath'].'/img/tn/';
 	}
 
 

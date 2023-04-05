@@ -48,10 +48,10 @@ a.blog.imgpicker = (function(){
 									else {
 										if (full_url) {
 											// Update with full url
-											cb('/blog/img/full/'+$(this).attr('data-filename'),{});
+											cb(a.sitesettings.basepath+'/img/full/'+$(this).attr('data-filename'),{});
 										}
 										else {
-											cb('/blog/img/full/'+$(this).attr('data-filename'),{});
+											cb(a.sitesettings.basepath+'/img/full/'+$(this).attr('data-filename'),{});
 										}
 									}
 									a.s.popup.remove(token,function(){});

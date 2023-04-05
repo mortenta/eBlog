@@ -1,4 +1,4 @@
-var a = (function(my){return my;}(a || {}));
+var a = (function(my){return my;}(a || {}));
 // @prepros-append "router.js"
 // @prepros-append "shared.js"
 // @prepros-append "blog.js"

@@ -158,6 +158,10 @@ class blog_admin {
 	* Getters
 	*/
 
+	public function getSiteSettings () {
+		return $this->SiteSettings;
+	}
+
 	public function getPostID () {
 		return intval($this->PostID);
 	}
