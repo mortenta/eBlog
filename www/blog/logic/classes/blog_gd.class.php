@@ -51,7 +51,7 @@ class blog_gd {
 	// Getters
 	
 	public function isLandscape () {
-		if (is_resource($this->Img)) {
+		if (is_resource($this->Img) || is_object($this->Img)) {
 			$this->getDimensions();
 			if ($this->OrigWidth >= $this->OrigHeight) {
 				return TRUE;
@@ -85,7 +85,9 @@ class blog_gd {
 	
 	function create () {
 		if (is_string($this->ImgStr)) {
-			if (is_resource($this->Img = imagecreatefromstring($this->ImgStr))) {
+			if (is_resource($this->Img = imagecreatefromstring($this->ImgStr)) || 
+				is_object($this->Img = imagecreatefromstring($this->ImgStr))
+			) {
 				$this->getDimensions();
 				return TRUE;
 			}
@@ -99,7 +101,7 @@ class blog_gd {
 	}
 	
 	function resize () {
-		if (is_resource($this->Img)) {
+		if (is_resource($this->Img) || is_object($this->Img)) {
 			if (!(is_numeric($this->OrigWidth) && is_numeric($this->OrigHeight))) {
 				$this->getDimensions();
 			}
@@ -149,7 +151,7 @@ class blog_gd {
 	}
 	
 	function display () {
-		if (is_resource($this->Img)) {
+		if (is_resource($this->Img) || is_object($this->Img)) {
 			header('Content-Type: image/png');
 			imagepng($this->Img);
 			imagedestroy($this->Img);
@@ -157,7 +159,7 @@ class blog_gd {
 	}
 	
 	function saveFile ($Filepath) {
-		if (is_resource($this->Img) && is_dir(dirname($Filepath))) {
+		if (is_resource($this->Img) || is_object($this->Img) && is_dir(dirname($Filepath))) {
 			if (imagejpeg($this->Img,$Filepath,80)) {
 				imagedestroy($this->Img);
 				return TRUE;
@@ -172,7 +174,7 @@ class blog_gd {
 	}
 	
 	public function returnFile () {
-		if (is_resource($this->Img)) {
+		if (is_resource($this->Img) || is_object($this->Img)) {
 			ob_start();
 			if ($this->ImageType == 'gif') {
 				@imagegif($this->Img);
@@ -204,7 +206,7 @@ class blog_gd {
 			$this->ImgStr = $Data;
 			$this->create();
 		}
-		if (is_resource($this->Img)) {
+		if (is_resource($this->Img) || is_object($this->Img)) {
 			$rgb = imagecolorat($this->Img,2,2);
 			$r = ($rgb >> 16) & 0xFF;
 			$g = ($rgb >> 8) & 0xFF;
@@ -225,7 +227,7 @@ class blog_gd {
 	// Private methods
 	
 	private function getDimensions () {
-		if (is_resource($this->Img)) {
+		if (is_resource($this->Img) || is_object($this->Img)) {
 			if (!is_numeric($this->OrigWidth)) {
 				$this->OrigWidth = imagesx($this->Img);
 			}
