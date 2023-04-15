@@ -7,6 +7,7 @@ class blogviewer_article {
 
 	private $PostArray;
 	private $RelatedList = array();
+	private $RelatedListIndex = array();
 
 	private $DateFormat = 'Y-m-d';
 	private $DefaultImage = 'https://via.placeholder.com/200x150';
@@ -297,12 +298,95 @@ class blogviewer_article {
 			$q->bindParam(":url_path",$this->URLPath);
 			$q->execute();
 			foreach ($q->fetchAll(PDO::FETCH_ASSOC) AS $Row) {
-				$this->RelatedList[] = $Row;
+				if (!array_key_exists($Row['id'],$this->RelatedListIndex)) {
+					$this->RelatedListIndex[$Row['id']] = $Row['id'];
+					$this->RelatedList[] = $Row;
+				}
 			}
 			return TRUE;
 		}
 		else {
-			return FALSE;
+			return TRUE;
+		}
+	}
+
+	public function loadRelatedByTags ($Limit=10) {
+		if (is_string($this->URLPath) && is_numeric($Limit)) {
+			$QueryString = "SELECT ";
+			$QueryString .= "blog_posts.id, ";
+			$QueryString .= "blog_posts.title, ";
+			$QueryString .= "blog_posts.url_path, ";
+			$QueryString .= "blog_posts.summary, ";
+			$QueryString .= "blog_posts.img, ";
+			$QueryString .= "blog_posts.time_created, ";
+			$QueryString .= "blog_posts.time_updated, ";
+			$QueryString .= "blog_posts.time_published, ";
+			$QueryString .= "COUNT(blog_post_tag_map.tagid) AS tag_count ";
+			$QueryString .= "FROM ";
+			$QueryString .= "blog_posts ";
+			$QueryString .= "LEFT JOIN blog_post_tag_map ON ";
+			$QueryString .= "blog_post_tag_map.postid = blog_posts.id AND ";
+			$QueryString .= "blog_post_tag_map.tagid IN( ";
+			$QueryString .= "SELECT ";
+			$QueryString .= "blog_post_tag_map.tagid ";
+			$QueryString .= "FROM ";
+			$QueryString .= "blog_post_tag_map ";
+			$QueryString .= "LEFT JOIN blog_posts ON blog_posts.id = blog_post_tag_map.postid ";
+			$QueryString .= "WHERE blog_posts.url_path=:url_path";
+			$QueryString .= ") ";
+			$QueryString .= "WHERE ";
+			$QueryString .= "blog_posts.published=1 AND ";
+			$QueryString .= "blog_posts.url_path != :url_path ";
+			$QueryString .= "GROUP BY blog_posts.id ";
+			$QueryString .= "ORDER BY tag_count DESC, time_published DESC ";
+			$QueryString .= "LIMIT 0,".$Limit;
+			$q = $this->DBObj->prepare($QueryString);
+			$q->bindParam(":url_path",$this->URLPath);
+			$q->execute();
+			foreach ($q->fetchAll(PDO::FETCH_ASSOC) AS $Row) {
+				if (!array_key_exists($Row['id'],$this->RelatedListIndex)) {
+					$this->RelatedListIndex[$Row['id']] = $Row['id'];
+					$this->RelatedList[] = $Row;
+				}
+			}
+			return TRUE;
+		}
+		else {
+			return TRUE;
+		}
+	}
+
+	public function loadLatest ($Limit=5) {
+		if (is_string($this->URLPath) && is_numeric($Limit)) {
+			$QueryString = "SELECT ";
+			$QueryString .= "blog_posts.id, ";
+			$QueryString .= "blog_posts.title, ";
+			$QueryString .= "blog_posts.url_path, ";
+			$QueryString .= "blog_posts.summary, ";
+			$QueryString .= "blog_posts.img, ";
+			$QueryString .= "blog_posts.time_created, ";
+			$QueryString .= "blog_posts.time_updated, ";
+			$QueryString .= "blog_posts.time_published ";
+			$QueryString .= "FROM ";
+			$QueryString .= "blog_posts ";
+			$QueryString .= "WHERE ";
+			$QueryString .= "blog_posts.published=1 AND ";
+			$QueryString .= "blog_posts.url_path != :url_path ";
+			$QueryString .= "ORDER BY blog_posts.time_published DESC ";
+			$QueryString .= "LIMIT 0,".$Limit;
+			$q = $this->DBObj->prepare($QueryString);
+			$q->bindParam(":url_path",$this->URLPath);
+			$q->execute();
+			foreach ($q->fetchAll(PDO::FETCH_ASSOC) AS $Row) {
+				if (!array_key_exists($Row['id'],$this->RelatedListIndex)) {
+					$this->RelatedListIndex[$Row['id']] = $Row['id'];
+					$this->RelatedList[] = $Row;
+				}
+			}
+			return TRUE;
+		}
+		else {
+			return TRUE;
 		}
 	}
 
